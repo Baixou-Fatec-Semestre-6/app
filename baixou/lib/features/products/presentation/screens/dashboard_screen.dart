@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:baixou/core/theme/app_theme.dart';
 import 'package:baixou/core/utils/responsive_layout.dart';
@@ -122,10 +123,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   border: Border.all(color: AppTheme.primary, width: 2),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: const Text(
+                child: Text(
                   'B',
-                  style: TextStyle(
-                    fontFamily: 'Barlow Condensed',
+                  style: GoogleFonts.barlowCondensed(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 1,
@@ -178,10 +178,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 border: Border.all(color: AppTheme.primary, width: 2.5),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
+              child: Text(
                 'BX',
-                style: TextStyle(
-                  fontFamily: 'Barlow Condensed',
+                style: GoogleFonts.barlowCondensed(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 2,

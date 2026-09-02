@@ -90,7 +90,12 @@ class NotificationsScreen extends StatelessWidget {
                                 child: ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
                                   child: notification.productImageUrl != null
-                                      ? Image.network(notification.productImageUrl!, fit: BoxFit.contain)
+                                      ? Image.network(
+                                          notification.productImageUrl!,
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (context, error, stackTrace) =>
+                                              const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
+                                        )
                                       : const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
                                 ),
                               ),

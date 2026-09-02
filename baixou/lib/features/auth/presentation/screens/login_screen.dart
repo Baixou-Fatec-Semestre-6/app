@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:baixou/core/theme/app_theme.dart';
 import 'package:baixou/core/utils/responsive_layout.dart';
@@ -30,26 +31,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
-    bool success;
 
     if (_isLoginMode) {
-      success = await authNotifier.login(email, password);
+      await authNotifier.login(email, password);
     } else {
-      success = await authNotifier.register(email, password);
-    }
-
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            _isLoginMode
-                ? 'Login realizado com sucesso!'
-                : 'Cadastro realizado com sucesso!',
-          ),
-          backgroundColor: AppTheme.statusScraped,
-        ),
-      );
-      // Navigation is handled automatically since state change triggers main.dart's screen switcher
+      await authNotifier.register(email, password);
     }
   }
 
@@ -113,10 +99,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 border: Border.all(color: AppTheme.primary, width: 3),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
+              child: Text(
                 'BAIXOU',
-                style: TextStyle(
-                  fontFamily: 'Barlow Condensed',
+                style: GoogleFonts.barlowCondensed(
                   fontSize: 48,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 4,

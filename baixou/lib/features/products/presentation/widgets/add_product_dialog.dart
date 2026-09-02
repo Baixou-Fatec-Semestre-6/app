@@ -230,7 +230,12 @@ class _AddProductDialogState extends State<AddProductDialog> {
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.circular(8),
                                       child: product.imageUrl != null
-                                          ? Image.network(product.imageUrl!, fit: BoxFit.contain)
+                                          ? Image.network(
+                                              product.imageUrl!,
+                                              fit: BoxFit.contain,
+                                              errorBuilder: (context, error, stackTrace) =>
+                                                  const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
+                                            )
                                           : const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
                                     ),
                                   ),

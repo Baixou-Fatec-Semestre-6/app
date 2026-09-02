@@ -188,7 +188,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
                 child: product.status == ProductStatus.scraped && product.imageUrl != null
-                    ? Image.network(product.imageUrl!, fit: BoxFit.contain)
+                    ? Image.network(
+                        product.imageUrl!,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.image_not_supported_outlined, size: 64, color: AppTheme.textSecondary),
+                      )
                     : const Icon(Icons.shopping_bag_outlined, size: 64, color: AppTheme.textSecondary),
               ),
             ),

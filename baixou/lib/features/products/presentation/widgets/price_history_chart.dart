@@ -5,10 +5,12 @@ import 'package:baixou/features/products/domain/entities/price_history_item.dart
 
 class PriceHistoryChart extends StatelessWidget {
   final List<PriceHistoryItem> history;
+  final String timeRange; // '30d' | '90d' | '1y'
 
   const PriceHistoryChart({
     super.key,
     required this.history,
+    this.timeRange = '30d',
   });
 
   @override
@@ -18,7 +20,9 @@ class PriceHistoryChart extends StatelessWidget {
     }
 
     if (history.length < 2) {
-      return _buildPlaceholder('Histórico inicial registrado. Aguardando novas raspagens para traçar o gráfico.');
+      return _buildPlaceholder(
+        'Histórico inicial registrado. Aguardando novas raspagens para traçar o gráfico.',
+      );
     }
 
     // Sort history by date to ensure line goes left-to-right
@@ -38,7 +42,10 @@ class PriceHistoryChart extends StatelessWidget {
 
     // Add padding to min/max prices for visual spacing
     final priceRange = maxPrice - minPrice;
-    final yMin = (minPrice - (priceRange > 0 ? priceRange * 0.15 : 10.0)).clamp(0.0, double.infinity);
+    final yMin = (minPrice - (priceRange > 0 ? priceRange * 0.15 : 10.0)).clamp(
+      0.0,
+      double.infinity,
+    );
     final yMax = maxPrice + (priceRange > 0 ? priceRange * 0.15 : 10.0);
 
     return Container(
@@ -56,16 +63,17 @@ class PriceHistoryChart extends StatelessWidget {
             drawVerticalLine: false,
             horizontalInterval: priceRange > 0 ? priceRange / 3 : 20,
             getDrawingHorizontalLine: (value) {
-              return const FlLine(
-                color: AppTheme.border,
-                strokeWidth: 1,
-              );
+              return const FlLine(color: AppTheme.border, strokeWidth: 1);
             },
           ),
           titlesData: FlTitlesData(
             show: true,
-            rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
+            topTitles: const AxisTitles(
+              sideTitles: SideTitles(showTitles: false),
+            ),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
@@ -123,19 +131,20 @@ class PriceHistoryChart extends StatelessWidget {
               isStrokeCapRound: true,
               dotData: FlDotData(
                 show: true,
-                getDotPainter: (spot, percent, barData, index) => FlDotCirclePainter(
-                  radius: 4,
-                  color: AppTheme.statusScraped,
-                  strokeWidth: 2,
-                  strokeColor: AppTheme.darkCard,
-                ),
+                getDotPainter: (spot, percent, barData, index) =>
+                    FlDotCirclePainter(
+                      radius: 4,
+                      color: AppTheme.statusScraped,
+                      strokeWidth: 2,
+                      strokeColor: AppTheme.darkCard,
+                    ),
               ),
               belowBarData: BarAreaData(
                 show: true,
                 gradient: LinearGradient(
                   colors: [
-                    AppTheme.statusScraped.withOpacity(0.3),
-                    AppTheme.statusScraped.withOpacity(0.0),
+                    AppTheme.statusScraped.withValues(alpha: 0.3),
+                    AppTheme.statusScraped.withValues(alpha: 0.0),
                   ],
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
@@ -179,12 +188,19 @@ class PriceHistoryChart extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.analytics_outlined, color: AppTheme.textSecondary, size: 48),
+              const Icon(
+                Icons.analytics_outlined,
+                color: AppTheme.textSecondary,
+                size: 48,
+              ),
               const SizedBox(height: 12),
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                style: const TextStyle(
+                  color: AppTheme.textSecondary,
+                  fontSize: 14,
+                ),
               ),
             ],
           ),

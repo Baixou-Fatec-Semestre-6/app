@@ -293,6 +293,19 @@ class ProductsNotifier extends ChangeNotifier {
     return _alerts.where((alert) => alert.productId == productId).toList();
   }
 
+  // Check if product's current price is lower than its initial price in history
+  bool hasPriceDropped(Product product) {
+    if (product.currentPrice == null || product.status != ProductStatus.scraped) return false;
+    final history = _priceHistories[product.id];
+    if (history != null && history.length >= 2) {
+      final initialPrice = history.first.price;
+      return product.currentPrice! < initialPrice;
+    }
+    return false;
+  }
+
+  int get droppedProductsCount => _products.where((p) => hasPriceDropped(p)).length;
+
   // Search products from the PostgreSQL base catalog
   Future<List<Product>> searchCatalog(String query) async {
     _isLoading = true;

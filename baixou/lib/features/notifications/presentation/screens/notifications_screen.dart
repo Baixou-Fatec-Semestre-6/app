@@ -18,12 +18,23 @@ class NotificationsScreen extends StatelessWidget {
         actions: [
           if (notifications.isNotEmpty)
             TextButton.icon(
-              icon: const Icon(Icons.done_all, color: AppTheme.primaryLight, size: 18),
-              label: const Text('Marcar todas como lidas', style: TextStyle(color: AppTheme.primaryLight, fontSize: 13)),
+              icon: const Icon(
+                Icons.done_all,
+                color: AppTheme.primaryLight,
+                size: 18,
+              ),
+              label: const Text(
+                'Marcar todas como lidas',
+                style: TextStyle(color: AppTheme.primaryLight, fontSize: 13),
+              ),
               onPressed: () {
                 notificationsNotifier.markAllAsRead();
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Todas as notificações foram marcadas como lidas!')),
+                  const SnackBar(
+                    content: Text(
+                      'Todas as notificações foram marcadas como lidas!',
+                    ),
+                  ),
                 );
               },
             ),
@@ -36,17 +47,28 @@ class NotificationsScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.notifications_off_outlined, color: AppTheme.textSecondary.withOpacity(0.5), size: 64),
+                    Icon(
+                      Icons.notifications_off_outlined,
+                      color: AppTheme.textSecondary.withValues(alpha: 0.5),
+                      size: 64,
+                    ),
                     const SizedBox(height: 16),
                     const Text(
                       'Sem Notificações',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppTheme.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     const Text(
                       'Defina alertas de preço nos seus produtos rastreados. Quando o preço cair, você será notificado aqui!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+                      style: TextStyle(
+                        color: AppTheme.textSecondary,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -57,7 +79,11 @@ class NotificationsScreen extends StatelessWidget {
               itemCount: notifications.length,
               itemBuilder: (context, index) {
                 final notification = notifications[index];
-                final percentDrop = ((notification.oldPrice - notification.newPrice) / notification.oldPrice * 100).toStringAsFixed(0);
+                final percentDrop =
+                    ((notification.oldPrice - notification.newPrice) /
+                            notification.oldPrice *
+                            100)
+                        .toStringAsFixed(0);
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 12),
@@ -68,7 +94,9 @@ class NotificationsScreen extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProductDetailsScreen(productId: notification.productId),
+                          builder: (context) => ProductDetailsScreen(
+                            productId: notification.productId,
+                          ),
                         ),
                       );
                     },
@@ -93,10 +121,18 @@ class NotificationsScreen extends StatelessWidget {
                                       ? Image.network(
                                           notification.productImageUrl!,
                                           fit: BoxFit.contain,
-                                          errorBuilder: (context, error, stackTrace) =>
-                                              const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Icon(
+                                                    Icons.shopping_bag_outlined,
+                                                    color:
+                                                        AppTheme.textSecondary,
+                                                  ),
                                         )
-                                      : const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
+                                      : const Icon(
+                                          Icons.shopping_bag_outlined,
+                                          color: AppTheme.textSecondary,
+                                        ),
                                 ),
                               ),
                               const SizedBox(width: 16),
@@ -110,35 +146,58 @@ class NotificationsScreen extends StatelessWidget {
                                       notification.productTitle,
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
                                     ),
                                     const SizedBox(height: 6),
                                     RichText(
                                       text: TextSpan(
-                                        style: TextStyle(color: AppTheme.textSecondary.withOpacity(0.9), fontSize: 13),
+                                        style: TextStyle(
+                                          color: AppTheme.textSecondary
+                                              .withValues(alpha: 0.9),
+                                          fontSize: 13,
+                                        ),
                                         children: [
                                           const TextSpan(text: 'Preço caiu '),
                                           TextSpan(
                                             text: '$percentDrop% ',
-                                            style: const TextStyle(color: AppTheme.statusScraped, fontWeight: FontWeight.bold),
+                                            style: const TextStyle(
+                                              color: AppTheme.statusScraped,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                           const TextSpan(text: 'de '),
                                           TextSpan(
-                                            text: 'R\$ ${notification.oldPrice.toStringAsFixed(2)}',
-                                            style: const TextStyle(decoration: TextDecoration.lineThrough),
+                                            text:
+                                                'R\$ ${notification.oldPrice.toStringAsFixed(2)}',
+                                            style: const TextStyle(
+                                              decoration:
+                                                  TextDecoration.lineThrough,
+                                            ),
                                           ),
                                           const TextSpan(text: ' para '),
                                           TextSpan(
-                                            text: 'R\$ ${notification.newPrice.toStringAsFixed(2)}',
-                                            style: const TextStyle(color: AppTheme.statusScraped, fontWeight: FontWeight.bold),
+                                            text:
+                                                'R\$ ${notification.newPrice.toStringAsFixed(2)}',
+                                            style: const TextStyle(
+                                              color: AppTheme.statusScraped,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
                                         ],
                                       ),
                                     ),
                                     const SizedBox(height: 8),
                                     Text(
-                                      _formatRelativeTime(notification.createdAt),
-                                      style: const TextStyle(color: AppTheme.textSecondary, fontSize: 10),
+                                      _formatRelativeTime(
+                                        notification.createdAt,
+                                      ),
+                                      style: const TextStyle(
+                                        color: AppTheme.textSecondary,
+                                        fontSize: 10,
+                                      ),
                                     ),
                                   ],
                                 ),

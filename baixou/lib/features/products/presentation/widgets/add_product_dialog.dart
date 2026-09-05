@@ -21,10 +21,7 @@ class AddProductDialog extends StatefulWidget {
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
-          child: const SizedBox(
-            height: 550,
-            child: AddProductDialog(),
-          ),
+          child: const SizedBox(height: 550, child: AddProductDialog()),
         ),
       );
     } else {
@@ -35,11 +32,7 @@ class AddProductDialog extends StatefulWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(Radius.circular(24)),
           ),
-          child: SizedBox(
-            width: 600,
-            height: 600,
-            child: AddProductDialog(),
-          ),
+          child: SizedBox(width: 600, height: 600, child: AddProductDialog()),
         ),
       );
     }
@@ -85,7 +78,10 @@ class _AddProductDialogState extends State<AddProductDialog> {
       _isSearching = true;
     });
 
-    final productsNotifier = Provider.of<ProductsNotifier>(context, listen: false);
+    final productsNotifier = Provider.of<ProductsNotifier>(
+      context,
+      listen: false,
+    );
     final results = await productsNotifier.searchCatalog(query);
 
     if (mounted) {
@@ -103,7 +99,10 @@ class _AddProductDialogState extends State<AddProductDialog> {
       _isLoading = true;
     });
 
-    final productsNotifier = Provider.of<ProductsNotifier>(context, listen: false);
+    final productsNotifier = Provider.of<ProductsNotifier>(
+      context,
+      listen: false,
+    );
 
     // Track product selected from base catalog
     await productsNotifier.trackNewProduct(_selectedProduct!);
@@ -115,7 +114,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
       Navigator.pop(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('"${_selectedProduct!.title}" enviado para a fila de monitoramento!'),
+          content: Text(
+            '"${_selectedProduct!.title}" enviado para a fila de monitoramento!',
+          ),
           backgroundColor: AppTheme.statusPending,
         ),
       );
@@ -156,7 +157,10 @@ class _AddProductDialogState extends State<AddProductDialog> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'Buscar por nome do produto ou loja...',
-              prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: AppTheme.textSecondary,
+              ),
               suffixIcon: _searchController.text.isNotEmpty
                   ? IconButton(
                       icon: const Icon(Icons.clear),
@@ -179,108 +183,130 @@ class _AddProductDialogState extends State<AddProductDialog> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CircularProgressIndicator(strokeWidth: 2, color: AppTheme.primary),
+                      CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: AppTheme.primary,
+                      ),
                       SizedBox(height: 12),
                       Text(
                         'Consultando tabela produto...',
-                        style: TextStyle(color: AppTheme.textSecondary, fontSize: 13),
+                        style: TextStyle(
+                          color: AppTheme.textSecondary,
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
                 )
               : _filteredCatalog.isEmpty
-                  ? _buildEmptyState()
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
-                      itemCount: _filteredCatalog.length,
-                      itemBuilder: (context, index) {
-                        final product = _filteredCatalog[index];
-                        final isSelected = _selectedProduct?.id == product.id;
+              ? _buildEmptyState()
+              : ListView.builder(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24.0,
+                    vertical: 8.0,
+                  ),
+                  itemCount: _filteredCatalog.length,
+                  itemBuilder: (context, index) {
+                    final product = _filteredCatalog[index];
+                    final isSelected = _selectedProduct?.id == product.id;
 
-                        return Card(
-                          margin: const EdgeInsets.only(bottom: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(
-                              color: isSelected ? AppTheme.primary : AppTheme.border,
-                              width: isSelected ? 2 : 1,
-                            ),
-                          ),
-                          color: isSelected ? AppTheme.primary.withOpacity(0.08) : AppTheme.darkCard,
-                          child: InkWell(
-                            borderRadius: BorderRadius.circular(12),
-                            onTap: () {
-                              setState(() {
-                                _selectedProduct = product;
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Small Image
-                                  Container(
-                                    width: 50,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: AppTheme.darkBg,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(8),
-                                      child: product.imageUrl != null
-                                          ? Image.network(
-                                              product.imageUrl!,
-                                              fit: BoxFit.contain,
-                                              errorBuilder: (context, error, stackTrace) =>
-                                                  const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
-                                            )
-                                          : const Icon(Icons.shopping_bag_outlined, color: AppTheme.textSecondary),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
+                    return Card(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        side: BorderSide(
+                          color: isSelected
+                              ? AppTheme.primary
+                              : AppTheme.border,
+                          width: isSelected ? 2 : 1,
+                        ),
+                      ),
+                      color: isSelected
+                          ? AppTheme.primary.withValues(alpha: 0.08)
+                          : AppTheme.darkCard,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(12),
+                        onTap: () {
+                          setState(() {
+                            _selectedProduct = product;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(12.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Small Image
+                              Container(
+                                width: 50,
+                                height: 50,
+                                decoration: BoxDecoration(
+                                  color: AppTheme.darkBg,
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: product.imageUrl != null
+                                      ? Image.network(
+                                          product.imageUrl!,
+                                          fit: BoxFit.contain,
+                                          errorBuilder:
+                                              (context, error, stackTrace) =>
+                                                  const Icon(
+                                                    Icons.shopping_bag_outlined,
+                                                    color:
+                                                        AppTheme.textSecondary,
+                                                  ),
+                                        )
+                                      : const Icon(
+                                          Icons.shopping_bag_outlined,
+                                          color: AppTheme.textSecondary,
+                                        ),
+                                ),
+                              ),
+                              const SizedBox(width: 12),
 
-                                  // Info
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                              // Info
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product.title ?? '',
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13,
+                                        color: AppTheme.textPrimary,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          product.title ?? '',
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
+                                          'R\$ ${product.currentPrice?.toStringAsFixed(2)}',
                                           style: const TextStyle(
+                                            color: AppTheme.statusScraped,
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 13,
-                                            color: AppTheme.textPrimary,
+                                            fontSize: 14,
                                           ),
                                         ),
-                                        const SizedBox(height: 6),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              'R\$ ${product.currentPrice?.toStringAsFixed(2)}',
-                                              style: const TextStyle(
-                                                color: AppTheme.statusScraped,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            _buildStoreBadge(product.store),
-                                          ],
-                                        ),
+                                        _buildStoreBadge(product.store),
                                       ],
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
+                            ],
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
         ),
 
         // Action Button
@@ -292,7 +318,10 @@ class _AddProductDialogState extends State<AddProductDialog> {
                 ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
                   )
                 : const Text('Rastrear Produto Selecionado'),
           ),
@@ -308,7 +337,11 @@ class _AddProductDialogState extends State<AddProductDialog> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off_outlined, color: AppTheme.textSecondary, size: 48),
+            Icon(
+              Icons.search_off_outlined,
+              color: AppTheme.textSecondary,
+              size: 48,
+            ),
             SizedBox(height: 12),
             Text(
               'Nenhum produto encontrado nesta busca.',

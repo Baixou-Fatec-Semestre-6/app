@@ -11,7 +11,6 @@ import 'package:baixou/features/products/presentation/widgets/add_product_dialog
 import 'package:baixou/features/products/presentation/widgets/product_card.dart';
 import 'package:baixou/features/auth/presentation/screens/profile_screen.dart';
 
-
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
 
@@ -23,6 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _currentTabIndex = 0; // 0 = Products, 1 = Notifications, 2 = Profile
   final _searchController = TextEditingController();
   String _searchQuery = '';
+  String _selectedFilter = 'TODOS'; // 'TODOS' | 'CAIU'
 
   @override
   void dispose() {
@@ -39,8 +39,49 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       body: isMobile
-          ? _buildMobileShell(authNotifier, notificationsNotifier, productsNotifier)
-          : _buildDesktopShell(authNotifier, notificationsNotifier, productsNotifier),
+          ? _buildMobileShell(
+              authNotifier,
+              notificationsNotifier,
+              productsNotifier,
+            )
+          : _buildDesktopShell(
+              authNotifier,
+              notificationsNotifier,
+              productsNotifier,
+            ),
+      bottomNavigationBar: isMobile
+          ? BottomNavigationBar(
+              currentIndex: _currentTabIndex,
+              onTap: (index) => setState(() => _currentTabIndex = index),
+              backgroundColor: AppTheme.darkCard,
+              selectedItemColor: AppTheme.primary,
+              unselectedItemColor: AppTheme.textSecondary,
+              showSelectedLabels: true,
+              showUnselectedLabels: true,
+              type: BottomNavigationBarType.fixed,
+              items: [
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.shopping_bag_outlined),
+                  activeIcon: Icon(Icons.shopping_bag),
+                  label: 'Produtos',
+                ),
+                BottomNavigationBarItem(
+                  icon: Badge(
+                    isLabelVisible: notificationsNotifier.unreadCount > 0,
+                    label: Text(notificationsNotifier.unreadCount.toString()),
+                    child: const Icon(Icons.notifications_outlined),
+                  ),
+                  activeIcon: const Icon(Icons.notifications),
+                  label: 'Notificações',
+                ),
+                const BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline),
+                  activeIcon: Icon(Icons.person),
+                  label: 'Perfil',
+                ),
+              ],
+            )
+          : null,
       floatingActionButton: isMobile && _currentTabIndex == 0
           ? FloatingActionButton(
               onPressed: () => AddProductDialog.show(context, isMobile: true),
@@ -72,43 +113,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
         ),
-        // Bottom Nav Bar
-        BottomNavigationBar(
-          currentIndex: _currentTabIndex,
-          onTap: (index) => setState(() => _currentTabIndex = index),
-          backgroundColor: AppTheme.darkCard,
-          selectedItemColor: AppTheme.primary,
-          unselectedItemColor: AppTheme.textSecondary,
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
-          type: BottomNavigationBarType.fixed,
-          items: [
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.shopping_bag_outlined),
-              activeIcon: Icon(Icons.shopping_bag),
-              label: 'Produtos',
-            ),
-            BottomNavigationBarItem(
-              icon: Badge(
-                isLabelVisible: notificationsNotifier.unreadCount > 0,
-                label: Text(notificationsNotifier.unreadCount.toString()),
-                child: const Icon(Icons.notifications_outlined),
-              ),
-              activeIcon: const Icon(Icons.notifications),
-              label: 'Notificações',
-            ),
-            const BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              activeIcon: Icon(Icons.person),
-              label: 'Perfil',
-            ),
-          ],
-        ),
       ],
     );
   }
 
-  Widget _buildMobileAppBar(AuthNotifier auth, NotificationsNotifier notifications) {
+  Widget _buildMobileAppBar(
+    AuthNotifier auth,
+    NotificationsNotifier notifications,
+  ) {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
       color: AppTheme.darkBg,
@@ -144,7 +156,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ],
           ),
           IconButton(
-            icon: const Icon(Icons.logout_outlined, color: AppTheme.textSecondary),
+            icon: const Icon(
+              Icons.logout_outlined,
+              color: AppTheme.textSecondary,
+            ),
             onPressed: () => auth.logout(),
           ),
         ],
@@ -163,13 +178,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // Side Navigation Rail
         NavigationRail(
           selectedIndex: _currentTabIndex,
-          onDestinationSelected: (index) => setState(() => _currentTabIndex = index),
+          onDestinationSelected: (index) =>
+              setState(() => _currentTabIndex = index),
           backgroundColor: AppTheme.darkCard,
           selectedIconTheme: const IconThemeData(color: AppTheme.primary),
-          unselectedIconTheme: const IconThemeData(color: AppTheme.textSecondary),
+          unselectedIconTheme: const IconThemeData(
+            color: AppTheme.textSecondary,
+          ),
           labelType: NavigationRailLabelType.all,
-          selectedLabelTextStyle: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold),
-          unselectedLabelTextStyle: const TextStyle(color: AppTheme.textSecondary),
+          selectedLabelTextStyle: const TextStyle(
+            color: AppTheme.primary,
+            fontWeight: FontWeight.bold,
+          ),
+          unselectedLabelTextStyle: const TextStyle(
+            color: AppTheme.textSecondary,
+          ),
           leading: Padding(
             padding: const EdgeInsets.symmetric(vertical: 24.0),
             child: Container(
@@ -198,11 +221,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   children: [
                     Text(
                       authNotifier.currentUser?.email.split('@')[0] ?? 'User',
-                      style: const TextStyle(fontSize: 12, color: AppTheme.textSecondary, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppTheme.textSecondary,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     IconButton(
-                      icon: const Icon(Icons.logout, color: AppTheme.statusFailed),
+                      icon: const Icon(
+                        Icons.logout,
+                        color: AppTheme.statusFailed,
+                      ),
                       tooltip: 'Sair da conta',
                       onPressed: () => authNotifier.logout(),
                     ),
@@ -250,13 +280,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   // --- PRODUCTS LIST TAB ---
-  Widget _buildProductsTab(ProductsNotifier productsNotifier, {required bool isMobile}) {
-    // Filter products based on search query
+  Widget _buildProductsTab(
+    ProductsNotifier productsNotifier, {
+    required bool isMobile,
+  }) {
+    // Filter products based on selected filter and search query
     final filteredProducts = productsNotifier.products.where((p) {
+      if (_selectedFilter == 'CAIU' && !productsNotifier.hasPriceDropped(p)) {
+        return false;
+      }
       final query = _searchQuery.toLowerCase();
-      if (p.title != null && p.title!.toLowerCase().contains(query)) return true;
-      if (p.url.toLowerCase().contains(query)) return true;
-      return false;
+      if (query.isNotEmpty) {
+        final titleMatch =
+            p.title != null && p.title!.toLowerCase().contains(query);
+        final urlMatch = p.url.toLowerCase().contains(query);
+        if (!titleMatch && !urlMatch) return false;
+      }
+      return true;
     }).toList();
 
     return Padding(
@@ -272,7 +312,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   controller: _searchController,
                   decoration: InputDecoration(
                     hintText: 'Pesquisar produtos monitorados...',
-                    prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondary),
+                    prefixIcon: const Icon(
+                      Icons.search,
+                      color: AppTheme.textSecondary,
+                    ),
                     suffixIcon: _searchQuery.isNotEmpty
                         ? IconButton(
                             icon: const Icon(Icons.clear),
@@ -292,12 +335,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 ElevatedButton.icon(
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text('Rastrear Produto'),
-                  onPressed: () => AddProductDialog.show(context, isMobile: false),
+                  onPressed: () =>
+                      AddProductDialog.show(context, isMobile: false),
                 ),
               ],
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
+
+          // Filter Pills Bar (TODOS / CAIU)
+          Row(
+            children: [
+              _buildFilterChip(
+                label: 'TODOS (${productsNotifier.products.length})',
+                isSelected: _selectedFilter == 'TODOS',
+                onTap: () => setState(() => _selectedFilter = 'TODOS'),
+              ),
+              const SizedBox(width: 12),
+              _buildFilterChip(
+                label: '🔥 CAIU (${productsNotifier.droppedProductsCount})',
+                isSelected: _selectedFilter == 'CAIU',
+                badgeColor: AppTheme.statusScraped,
+                onTap: () => setState(() => _selectedFilter = 'CAIU'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
 
           // Grid list of products
           Expanded(
@@ -321,7 +384,87 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _buildFilterChip({
+    required String label,
+    required bool isSelected,
+    required VoidCallback onTap,
+    Color? badgeColor,
+  }) {
+    final activeColor = badgeColor ?? AppTheme.primary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+        decoration: BoxDecoration(
+          color: isSelected ? activeColor : AppTheme.darkCard,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isSelected ? activeColor : AppTheme.border,
+            width: isSelected ? 1.5 : 1,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: activeColor.withValues(alpha: 0.3),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : AppTheme.textSecondary,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+            fontSize: 14,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildEmptyState(bool isListEmpty) {
+    if (_selectedFilter == 'CAIU') {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.trending_down,
+                color: AppTheme.statusScraped.withValues(alpha: 0.6),
+                size: 64,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Nenhum produto com preço reduzido no momento',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppTheme.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Quando um produto monitorado sofrer uma queda de preço, ele aparecerá nesta aba.\n\nDica: Clique no ícone 📉 em qualquer produto para simular uma queda de preço!',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+              ),
+              const SizedBox(height: 24),
+              OutlinedButton.icon(
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('Ver Todos os Produtos'),
+                onPressed: () => setState(() => _selectedFilter = 'TODOS'),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32.0),
@@ -330,13 +473,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             Icon(
               isListEmpty ? Icons.add_shopping_cart : Icons.search_off,
-              color: AppTheme.textSecondary.withOpacity(0.5),
+              color: AppTheme.textSecondary.withValues(alpha: 0.5),
               size: 64,
             ),
             const SizedBox(height: 16),
             Text(
-              isListEmpty ? 'Sem produtos sendo monitorados' : 'Nenhum resultado encontrado',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppTheme.textPrimary),
+              isListEmpty
+                  ? 'Sem produtos sendo monitorados'
+                  : 'Nenhum resultado encontrado',
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.textPrimary,
+              ),
             ),
             const SizedBox(height: 8),
             Text(
@@ -344,7 +493,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ? 'Pesquise e selecione um produto da nossa base para iniciar o rastreamento automático.'
                   : 'Tente ajustar sua busca ou limpar os termos do filtro.',
               textAlign: TextAlign.center,
-              style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+              style: const TextStyle(
+                color: AppTheme.textSecondary,
+                fontSize: 14,
+              ),
             ),
             if (isListEmpty) ...[
               const SizedBox(height: 24),

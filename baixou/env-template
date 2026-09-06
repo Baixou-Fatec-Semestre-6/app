@@ -1,0 +1,18 @@
+# ================================================
+# BAIXOU Mobile App - Environment Variables Template
+# ================================================
+
+# Application Info
+APP_NAME="BAIXOU - Price Tracker"
+APP_ENV=development # Options: development, staging, production
+
+# Core Backend API URLs
+# Android Emulator: http://10.0.2.2:8000/api
+# iOS Simulator / Web / Local Desktop: http://localhost:8000/api
+# Physical Device (same Wi-Fi): http://<YOUR_LOCAL_IP>:8000/api
+API_BASE_URL=http://10.0.2.2:8000/api
+API_TIMEOUT_MS=10000
+
+# Feature Flags & Debugging
+ENABLE_MOCK_DATA=false
+ENABLE_DEBUG_LOGS=true

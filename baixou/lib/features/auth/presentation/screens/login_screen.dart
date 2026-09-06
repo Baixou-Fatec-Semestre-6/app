@@ -5,6 +5,7 @@ import 'package:baixou/core/theme/app_theme.dart';
 import 'package:baixou/core/utils/responsive_layout.dart';
 import 'package:baixou/features/auth/presentation/controllers/auth_notifier.dart';
 import 'package:baixou/features/auth/presentation/screens/forgot_password_screen.dart';
+import 'package:baixou/features/auth/presentation/screens/activate_account_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -15,12 +16,14 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLoginMode = true;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -31,11 +34,24 @@ class _LoginScreenState extends State<LoginScreen> {
 
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
+    final name = _nameController.text.trim();
 
     if (_isLoginMode) {
       await authNotifier.login(email, password);
     } else {
-      await authNotifier.register(email, password);
+      final success = await authNotifier.register(
+        email,
+        password,
+        name: name.isNotEmpty ? name : null,
+      );
+      if (success && mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ActivateAccountScreen(email: email),
+          ),
+        );
+      }
     }
   }
 
@@ -120,6 +136,30 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 40),
 
+          // Name Field (Register Mode Only)
+          if (!_isLoginMode) ...[
+            TextFormField(
+              controller: _nameController,
+              keyboardType: TextInputType.name,
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(
+                labelText: 'Nome completo',
+                prefixIcon: Icon(
+                  Icons.person_outline,
+                  color: AppTheme.textSecondary,
+                ),
+                hintText: 'Seu nome',
+              ),
+              validator: (value) {
+                if (!_isLoginMode && (value == null || value.trim().isEmpty)) {
+                  return 'Insira o seu nome';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+          ],
+
           // Email Field
           TextFormField(
             controller: _emailController,
@@ -151,11 +191,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Icons.lock_outlined,
                 color: AppTheme.textSecondary,
               ),
-              hintText: 'Mínimo 6 caracteres',
+              hintText: 'Mínimo 8 caracteres',
             ),
             validator: (value) {
-              if (value == null || value.isEmpty || value.length < 6) {
-                return 'A senha deve conter pelo menos 6 caracteres';
+              if (value == null || value.isEmpty || value.length < 8) {
+                return 'A senha deve conter pelo menos 8 caracteres';
               }
               return null;
             },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/presentation/controllers/auth_notifier.dart';
@@ -7,7 +8,13 @@ import 'features/notifications/presentation/controllers/notifications_notifier.d
 import 'features/products/presentation/controllers/products_notifier.dart';
 import 'features/products/presentation/screens/dashboard_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await dotenv.load(fileName: ".env");
+  } catch (e) {
+    debugPrint('Aviso: Não foi possível carregar o arquivo .env: $e');
+  }
   runApp(const MyApp());
 }
 
@@ -39,7 +46,16 @@ class AuthGate extends StatelessWidget {
   Widget build(BuildContext context) {
     final authNotifier = Provider.of<AuthNotifier>(context);
 
-    // Dynamic gate based on authentication state
+    if (authNotifier.isCheckingAutoLogin) {
+      return const Scaffold(
+        body: Center(
+          child: CircularProgressIndicator(
+            color: AppTheme.primary,
+          ),
+        ),
+      );
+    }
+
     if (authNotifier.isAuthenticated) {
       return const DashboardScreen();
     } else {

@@ -11,13 +11,22 @@ class ForgotPasswordScreen extends StatefulWidget {
   State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
+enum ResetStep { enterEmail, enterCode, newPassword }
+
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _codeController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  ResetStep _currentStep = ResetStep.enterEmail;
+  String? _resetToken;
 
   @override
   void dispose() {
     _emailController.dispose();
+    _codeController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -25,28 +34,36 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     if (!_formKey.currentState!.validate()) return;
 
     final email = _emailController.text.trim();
-    final success = await authNotifier.recoverPassword(email);
 
-    if (success && mounted) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          backgroundColor: AppTheme.darkCard,
-          title: const Text('Email Enviado!'),
-          content: Text(
-            'Um código foi enviado para $email. Verifique sua caixa de entrada e spam.',
+    if (_currentStep == ResetStep.enterEmail) {
+      final success = await authNotifier.forgotPassword(email);
+      if (success && mounted) {
+        setState(() {
+          _currentStep = ResetStep.enterCode;
+        });
+      }
+    } else if (_currentStep == ResetStep.enterCode) {
+      final code = _codeController.text.trim();
+      final token = await authNotifier.verifyResetCode(email, code);
+      if (token != null && mounted) {
+        setState(() {
+          _resetToken = token;
+          _currentStep = ResetStep.newPassword;
+        });
+      }
+    } else if (_currentStep == ResetStep.newPassword && _resetToken != null) {
+      final newPassword = _passwordController.text.trim();
+      final success = await authNotifier.resetPassword(_resetToken!, newPassword);
+
+      if (success && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Senha redefinida com sucesso! Faça login com a nova senha.'),
+            backgroundColor: AppTheme.statusScraped,
           ),
-          actions: [
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context); // Close dialog
-                Navigator.pop(context); // Go back to login screen
-              },
-              child: const Text('Voltar para o Login'),
-            ),
-          ],
-        ),
-      );
+        );
+        Navigator.pop(context);
+      }
     }
   }
 
@@ -61,6 +78,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
             authNotifier.clearError();
+            authNotifier.clearSuccess();
             Navigator.pop(context);
           },
         ),
@@ -92,13 +110,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           color: AppTheme.darkCard,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(color: AppTheme.border, width: 1),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
         ),
         child: SingleChildScrollView(child: _buildFormContent(authNotifier)),
       ),
@@ -112,7 +123,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Icon branding
           const Center(
             child: CircleAvatar(
               radius: 40,
@@ -125,82 +135,112 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
-            'Esqueceu sua senha?',
+          Text(
+            _getStepTitle(),
             textAlign: TextAlign.center,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: AppTheme.textPrimary,
             ),
           ),
           const SizedBox(height: 12),
-          const Text(
-            'Digite seu endereço de email cadastrado e um código para recuperar seu acesso.',
+          Text(
+            _getStepSubtitle(),
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+            style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
           ),
           const SizedBox(height: 32),
 
-          // Email Field
-          TextFormField(
-            controller: _emailController,
-            keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
-              labelText: 'Email',
-              prefixIcon: Icon(
-                Icons.email_outlined,
-                color: AppTheme.textSecondary,
+          if (_currentStep == ResetStep.enterEmail) ...[
+            TextFormField(
+              controller: _emailController,
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(
+                labelText: 'Email',
+                prefixIcon: Icon(Icons.email_outlined, color: AppTheme.textSecondary),
+                hintText: 'exemplo@email.com',
               ),
-              hintText: 'exemplo@email.com',
+              validator: (value) {
+                if (value == null || value.isEmpty || !value.contains('@')) {
+                  return 'Insira um endereço de email válido';
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value == null || value.isEmpty || !value.contains('@')) {
-                return 'Insira um endereço de email válido';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 12),
-
-          // Error Message Display
-          if (authNotifier.errorMessage != null) ...[
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0),
-              child: Text(
-                authNotifier.errorMessage!,
-                style: const TextStyle(
-                  color: AppTheme.statusFailed,
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.center,
+          ] else if (_currentStep == ResetStep.enterCode) ...[
+            TextFormField(
+              controller: _codeController,
+              keyboardType: TextInputType.number,
+              maxLength: 4,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 24, letterSpacing: 8, fontWeight: FontWeight.bold),
+              decoration: const InputDecoration(
+                labelText: 'Código de 4 dígitos',
+                hintText: '1234',
+                counterText: '',
               ),
+              validator: (value) {
+                if (value == null || value.trim().length != 4) {
+                  return 'Insira o código de 4 dígitos';
+                }
+                return null;
+              },
             ),
-            const SizedBox(height: 10),
+          ] else if (_currentStep == ResetStep.newPassword) ...[
+            TextFormField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: const InputDecoration(
+                labelText: 'Nova Senha',
+                prefixIcon: Icon(Icons.lock_outlined, color: AppTheme.textSecondary),
+                hintText: 'Mínimo 8 caracteres',
+              ),
+              validator: (value) {
+                if (value == null || value.length < 8) {
+                  return 'A senha deve conter pelo menos 8 caracteres';
+                }
+                return null;
+              },
+            ),
           ],
 
-          // Submit Button
+          const SizedBox(height: 16),
+
+          if (authNotifier.errorMessage != null) ...[
+            Text(
+              authNotifier.errorMessage!,
+              style: const TextStyle(color: AppTheme.statusFailed, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          if (authNotifier.successMessage != null) ...[
+            Text(
+              authNotifier.successMessage!,
+              style: const TextStyle(color: AppTheme.statusScraped, fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+          ],
+
           ElevatedButton(
-            onPressed: authNotifier.isLoading
-                ? null
-                : () => _submit(authNotifier),
+            onPressed: authNotifier.isLoading ? null : () => _submit(authNotifier),
             child: authNotifier.isLoading
                 ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
+                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
                   )
-                : const Text('Enviar código'),
+                : Text(_getButtonLabel()),
           ),
           const SizedBox(height: 20),
 
-          // Go back button
           TextButton(
             onPressed: () {
               authNotifier.clearError();
+              authNotifier.clearSuccess();
               Navigator.pop(context);
             },
             child: const Text(
@@ -211,5 +251,38 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         ],
       ),
     );
+  }
+
+  String _getStepTitle() {
+    switch (_currentStep) {
+      case ResetStep.enterEmail:
+        return 'Esqueceu sua senha?';
+      case ResetStep.enterCode:
+        return 'Digite o Código de 4 dígitos';
+      case ResetStep.newPassword:
+        return 'Defina a Nova Senha';
+    }
+  }
+
+  String _getStepSubtitle() {
+    switch (_currentStep) {
+      case ResetStep.enterEmail:
+        return 'Digite seu e-mail para receber o código de recuperação.';
+      case ResetStep.enterCode:
+        return 'Enviamos o código para ${_emailController.text}.';
+      case ResetStep.newPassword:
+        return 'Escolha uma nova senha com no mínimo 8 caracteres.';
+    }
+  }
+
+  String _getButtonLabel() {
+    switch (_currentStep) {
+      case ResetStep.enterEmail:
+        return 'Enviar código';
+      case ResetStep.enterCode:
+        return 'Verificar código';
+      case ResetStep.newPassword:
+        return 'Redefinir Senha';
+    }
   }
 }

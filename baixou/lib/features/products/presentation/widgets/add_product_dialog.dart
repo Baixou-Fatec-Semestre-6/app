@@ -320,7 +320,7 @@ class _AddProductDialogState extends State<AddProductDialog> {
                     width: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: AppTheme.onBrand,
                     ),
                   )
                 : const Text('Rastrear Produto Selecionado'),
@@ -356,28 +356,28 @@ class _AddProductDialogState extends State<AddProductDialog> {
 
   Widget _buildStoreBadge(String storeName) {
     Color badgeColor;
-    Color textColor = Colors.white;
+    Color textColor = AppTheme.textTertiary;
 
     switch (storeName.toLowerCase()) {
       case 'amazon':
-        badgeColor = const Color(0xFFFF9900);
-        textColor = Colors.black87;
+        badgeColor = AppTheme.brand;
+        textColor = AppTheme.onBrand;
         break;
       case 'mercado livre':
-        badgeColor = const Color(0xFFFFF159);
-        textColor = Colors.black87;
+        badgeColor = AppTheme.brand;
+        textColor = AppTheme.onBrand;
         break;
       case 'magalu':
-        badgeColor = const Color(0xFF0086FF);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'kabum':
-        badgeColor = const Color(0xFF0060EE);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'shopee':
-        badgeColor = const Color(0xFFEE4D2D);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'americanas':
-        badgeColor = const Color(0xFFE60014);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       default:
         badgeColor = AppTheme.border;

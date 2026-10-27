@@ -81,10 +81,12 @@ class AuthRepositoryImpl implements AuthRepository {
       final user = User.fromJson(userData);
       await AuthStorage.saveUserData(user.toJson());
       return user;
-    } catch (_) {
-      // Token expired or invalid
-      await AuthStorage.clearAll();
-      return null;
+    } on ApiException catch (error) {
+      if (error.statusCode == 401) {
+        await AuthStorage.clearAll();
+        return null;
+      }
+      rethrow;
     }
   }
 

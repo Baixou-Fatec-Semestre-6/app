@@ -581,7 +581,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             Icons.smartphone,
                             size: 16,
                             color: _notifyApp
-                                ? Colors.white
+                                ? AppTheme.onBrand
                                 : AppTheme.textSecondary,
                           ),
                           label: const Text('Notificação no App'),
@@ -595,7 +595,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             Icons.email_outlined,
                             size: 16,
                             color: _notifyEmail
-                                ? Colors.white
+                                ? AppTheme.onBrand
                                 : AppTheme.textSecondary,
                           ),
                           label: const Text('E-mail'),
@@ -780,28 +780,28 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
 
   Widget _buildStoreBadge(String storeName) {
     Color badgeColor;
-    Color textColor = Colors.white;
+    Color textColor = AppTheme.textTertiary;
 
     switch (storeName.toLowerCase()) {
       case 'amazon':
-        badgeColor = const Color(0xFFFF9900);
-        textColor = Colors.black87;
+        badgeColor = AppTheme.brand;
+        textColor = AppTheme.onBrand;
         break;
       case 'mercado livre':
-        badgeColor = const Color(0xFFFFF159);
-        textColor = Colors.black87;
+        badgeColor = AppTheme.brand;
+        textColor = AppTheme.onBrand;
         break;
       case 'magalu':
-        badgeColor = const Color(0xFF0086FF);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'kabum':
-        badgeColor = const Color(0xFF0060EE);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'shopee':
-        badgeColor = const Color(0xFFEE4D2D);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'americanas':
-        badgeColor = const Color(0xFFE60014);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       default:
         badgeColor = AppTheme.border;
@@ -878,7 +878,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           style: TextStyle(
             fontSize: 11,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
-            color: isSelected ? Colors.white : AppTheme.textSecondary,
+            color: isSelected ? AppTheme.onBrand : AppTheme.textSecondary,
           ),
         ),
       ),

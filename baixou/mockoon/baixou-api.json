@@ -1,0 +1,170 @@
+{
+  "uuid": "07e93f12-b990-4a85-8967-06728c665d17",
+  "lastMigration": 33,
+  "name": "BAIXOU - API mock",
+  "endpointPrefix": "api",
+  "latency": 250,
+  "port": 3001,
+  "hostname": "0.0.0.0",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "10000000-0000-4000-8000-000000000001",
+      "type": "http",
+      "documentation": "Autentica o usuário. Selecione manualmente a resposta 422 para revisar o estado de erro.",
+      "method": "post",
+      "endpoint": "auth/login",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000001",
+          "body": "{\n  \"data\": {\"id\": 1, \"name\": \"Gabriel\", \"email\": \"gabriel@baixou.app\", \"created_at\": \"2026-08-29T20:00:00Z\"},\n  \"token\": \"mock-token-baixou\"\n}",
+          "latency": 350,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [], "bodyType": "INLINE", "filePath": "", "databucketID": "", "sendFileAsBody": false, "rules": [], "rulesOperator": "OR", "disableTemplating": false, "fallbackTo404": false, "default": true, "crudKey": "id"
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000002",
+          "body": "{\"message\":\"As credenciais fornecidas são inválidas.\",\"errors\":{\"email\":[\"As credenciais fornecidas são inválidas.\"]}}",
+          "latency": 350,
+          "statusCode": 422,
+          "label": "Credenciais inválidas",
+          "headers": [], "bodyType": "INLINE", "filePath": "", "databucketID": "", "sendFileAsBody": false, "rules": [], "rulesOperator": "OR", "disableTemplating": false, "fallbackTo404": false, "default": false, "crudKey": "id"
+        }
+      ],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000002",
+      "type": "http", "documentation": "Usuário autenticado", "method": "get", "endpoint": "auth/me",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000003","body":"{\"data\":{\"id\":1,\"name\":\"Gabriel\",\"email\":\"gabriel@baixou.app\",\"created_at\":\"2026-08-29T20:00:00Z\"}}","latency":150,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000003",
+      "type": "http", "documentation": "Cadastro", "method": "post", "endpoint": "auth/register",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000004","body":"{\"data\":{\"id\":2,\"name\":\"{{body 'name' 'Novo usuário'}}\",\"email\":\"{{body 'email'}}\",\"created_at\":\"{{now}}\"},\"message\":\"Conta criada com sucesso. Verifique seu e-mail.\"}","latency":400,"statusCode":201,"label":"Criado","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000004",
+      "type": "http", "documentation": "Ativação da conta", "method": "post", "endpoint": "auth/activate",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000005","body":"{\"message\":\"Conta ativada com sucesso.\"}","latency":250,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000005",
+      "type": "http", "documentation": "Solicita código de redefinição", "method": "post", "endpoint": "auth/forgot-password",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000006","body":"{\"message\":\"Código enviado.\"}","latency":300,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000006",
+      "type": "http", "documentation": "Valida código", "method": "post", "endpoint": "auth/verify-reset-code",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000007","body":"{\"message\":\"Código válido.\",\"reset_token\":\"mock-reset-token\"}","latency":250,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000007",
+      "type": "http", "documentation": "Redefine senha", "method": "post", "endpoint": "auth/reset-password",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000008","body":"{\"message\":\"Senha redefinida com sucesso.\"}","latency":250,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000008",
+      "type": "http", "documentation": "Encerra sessão", "method": "post", "endpoint": "auth/logout",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000009","body":"{\"message\":\"Logout efetuado com sucesso.\"}","latency":100,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000009",
+      "type": "http", "documentation": "Produtos monitorados", "method": "get", "endpoint": "products",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000010","body":"{\n  \"data\": [\n    {\"id\":101,\"url\":\"https://www.amazon.com.br/dp/B09TWDYSVP\",\"title\":\"Kindle 11ª Geração\",\"image_url\":\"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\"current_price\":474.05,\"currency\":\"BRL\",\"status\":\"scraped\",\"last_error_reason\":null,\"last_scraped_at\":\"2026-10-18T19:00:00Z\",\"created_at\":\"2026-10-08T12:00:00Z\",\"updated_at\":\"2026-10-18T19:00:00Z\",\"store\":\"Amazon\"},\n    {\"id\":102,\"url\":\"https://www.amazon.com.br/dp/B0CHX1B3H2\",\"title\":\"Apple iPhone 15 Pro (128 GB)\",\"image_url\":\"https://m.media-amazon.com/images/I/81SigupXmOL._AC_SL1500_.jpg\",\"current_price\":7299.0,\"currency\":\"BRL\",\"status\":\"scraped\",\"last_error_reason\":null,\"last_scraped_at\":\"2026-10-18T19:15:00Z\",\"created_at\":\"2026-10-13T12:00:00Z\",\"updated_at\":\"2026-10-18T19:15:00Z\",\"store\":\"Amazon\"},\n    {\"id\":103,\"url\":\"https://www.amazon.com.br/dp/B0CL5KFK8B\",\"title\":null,\"image_url\":null,\"current_price\":null,\"currency\":\"BRL\",\"status\":\"failed\",\"last_error_reason\":\"blocked\",\"last_scraped_at\":null,\"created_at\":\"2026-10-16T12:00:00Z\",\"updated_at\":\"2026-10-17T12:00:00Z\",\"store\":\"Amazon\"}\n  ]\n}","latency":300,"statusCode":200,"label":"Lista normal","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"},{"uuid":"20000000-0000-4000-8000-000000000011","body":"{\"data\":[]}","latency":300,"statusCode":200,"label":"Lista vazia","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":false,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000010",
+      "type": "http", "documentation": "Busca no catálogo", "method": "get", "endpoint": "products/catalog",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000012","body":"{\"data\":[{\"id\":1,\"url\":\"https://www.amazon.com.br/dp/B09TWDYSVP\",\"title\":\"Kindle 11ª Geração\",\"image_url\":\"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\"current_price\":474.05,\"currency\":\"BRL\",\"status\":\"scraped\",\"last_error_reason\":null,\"last_scraped_at\":\"2026-10-18T19:00:00Z\",\"created_at\":\"2026-08-29T12:00:00Z\",\"updated_at\":\"2026-10-18T19:00:00Z\",\"store\":\"Amazon\"},{\"id\":2,\"url\":\"https://www.amazon.com.br/dp/B0F8R9NDXC\",\"title\":\"PlayStation 5 Slim\",\"image_url\":\"https://m.media-amazon.com/images/I/71IkUBtdDGL._AC_SX679_.jpg\",\"current_price\":4691.91,\"currency\":\"BRL\",\"status\":\"scraped\",\"last_error_reason\":null,\"last_scraped_at\":\"2026-10-18T18:00:00Z\",\"created_at\":\"2026-08-29T12:00:00Z\",\"updated_at\":\"2026-10-18T18:00:00Z\",\"store\":\"Amazon\"}]}","latency":250,"statusCode":200,"label":"Resultados","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000011",
+      "type": "http", "documentation": "Inicia monitoramento e retorna pending", "method": "post", "endpoint": "products",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000013","body":"{\"data\":{\"id\":104,\"url\":\"https://www.amazon.com.br/dp/B09TWDYSVP\",\"title\":null,\"image_url\":null,\"current_price\":null,\"currency\":\"BRL\",\"status\":\"pending\",\"last_error_reason\":null,\"last_scraped_at\":null,\"created_at\":\"{{now}}\",\"updated_at\":\"{{now}}\",\"store\":\"Amazon\"}}","latency":350,"statusCode":201,"label":"Pendente","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000012",
+      "type": "http", "documentation": "Detalhes do produto", "method": "get", "endpoint": "products/:id",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000014","body":"{\"data\":{\"id\":{{urlParam 'id'}},\"url\":\"https://www.amazon.com.br/dp/B09TWDYSVP\",\"title\":\"Kindle 11ª Geração\",\"image_url\":\"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\"current_price\":474.05,\"currency\":\"BRL\",\"status\":\"scraped\",\"last_error_reason\":null,\"last_scraped_at\":\"2026-10-18T19:00:00Z\",\"created_at\":\"2026-10-08T12:00:00Z\",\"updated_at\":\"2026-10-18T19:00:00Z\",\"store\":\"Amazon\"}}","latency":200,"statusCode":200,"label":"Scraped","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000013",
+      "type": "http", "documentation": "Remove monitoramento", "method": "delete", "endpoint": "products/:id",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000015","body":"{}","latency":150,"statusCode":204,"label":"Removido","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000014",
+      "type": "http", "documentation": "Histórico", "method": "get", "endpoint": "products/:id/price-history",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000016","body":"{\"data\":[{\"id\":1,\"product_id\":{{urlParam 'id'}},\"price\":529.0,\"scraped_at\":\"2026-10-10T12:00:00Z\"},{\"id\":2,\"product_id\":{{urlParam 'id'}},\"price\":499.0,\"scraped_at\":\"2026-10-14T12:00:00Z\"},{\"id\":3,\"product_id\":{{urlParam 'id'}},\"price\":474.05,\"scraped_at\":\"2026-10-18T19:00:00Z\"}]}","latency":200,"statusCode":200,"label":"Histórico","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000015",
+      "type": "http", "documentation": "Demonstra queda e cria notificação mock", "method": "post", "endpoint": "products/:id/simulate-price-drop",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000017","body":"{\"data\":{\"id\":{{urlParam 'id'}},\"url\":\"https://www.amazon.com.br/dp/B09TWDYSVP\",\"title\":\"Kindle 11ª Geração\",\"image_url\":\"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\"current_price\":379.0,\"currency\":\"BRL\",\"status\":\"scraped\",\"last_error_reason\":null,\"last_scraped_at\":\"{{now}}\",\"created_at\":\"2026-10-08T12:00:00Z\",\"updated_at\":\"{{now}}\",\"store\":\"Amazon\"}}","latency":600,"statusCode":200,"label":"Preço reduzido","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000016",
+      "type": "http", "documentation": "Alertas ativos", "method": "get", "endpoint": "alerts",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000018","body":"{\"data\":[{\"id\":201,\"user_id\":1,\"product_id\":101,\"target_price\":450.0,\"created_at\":\"2026-10-18T12:00:00Z\"}]}","latency":150,"statusCode":200,"label":"Lista","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000017",
+      "type": "http", "documentation": "Cria alerta", "method": "post", "endpoint": "alerts",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000019","body":"{\"data\":{\"id\":{{faker 'number.int' min=300 max=999}},\"user_id\":1,\"product_id\":{{body 'product_id'}},\"target_price\":{{body 'target_price'}},\"created_at\":\"{{now}}\"}}","latency":200,"statusCode":201,"label":"Criado","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000018",
+      "type": "http", "documentation": "Remove alerta", "method": "delete", "endpoint": "alerts/:id",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000020","body":"{}","latency":100,"statusCode":204,"label":"Removido","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000019",
+      "type": "http", "documentation": "Notificações", "method": "get", "endpoint": "notifications",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000021","body":"{\"data\":[{\"id\":301,\"user_id\":1,\"product_id\":101,\"product_title\":\"Kindle 11ª Geração\",\"product_image_url\":\"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\"old_price\":499.0,\"new_price\":474.05,\"is_read\":false,\"created_at\":\"2026-10-18T19:00:00Z\"},{\"id\":302,\"user_id\":1,\"product_id\":102,\"product_title\":\"Apple iPhone 15 Pro\",\"product_image_url\":\"https://m.media-amazon.com/images/I/81SigupXmOL._AC_SL1500_.jpg\",\"old_price\":7599.0,\"new_price\":7299.0,\"is_read\":true,\"created_at\":\"2026-10-17T19:00:00Z\"}]}","latency":200,"statusCode":200,"label":"Lista","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000020",
+      "type": "http", "documentation": "Marca uma notificação", "method": "patch", "endpoint": "notifications/:id/read",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000022","body":"{\"message\":\"Notificação lida.\"}","latency":100,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000021",
+      "type": "http", "documentation": "Marca todas como lidas", "method": "patch", "endpoint": "notifications/read-all",
+      "responses": [{"uuid":"20000000-0000-4000-8000-000000000023","body":"{\"message\":\"Notificações lidas.\"}","latency":100,"statusCode":200,"label":"Sucesso","headers":[],"bodyType":"INLINE","filePath":"","databucketID":"","sendFileAsBody":false,"rules":[],"rulesOperator":"OR","disableTemplating":false,"fallbackTo404":false,"default":true,"crudKey":"id"}],
+      "enabled": true, "responseMode": null
+    }
+  ],
+  "rootChildren": [
+    {"type":"route","uuid":"10000000-0000-4000-8000-000000000001"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000002"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000003"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000004"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000005"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000006"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000007"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000008"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000009"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000010"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000011"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000012"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000013"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000014"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000015"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000016"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000017"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000018"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000019"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000020"},{"type":"route","uuid":"10000000-0000-4000-8000-000000000021"}
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "cors": true,
+  "headers": [{"key":"Content-Type","value":"application/json"}],
+  "proxyReqHeaders": [],
+  "proxyResHeaders": [],
+  "tlsOptions": {"enabled":false,"type":"CERT","pfxPath":"","certPath":"","keyPath":"","caPath":"","passphrase":""},
+  "data": []
+}

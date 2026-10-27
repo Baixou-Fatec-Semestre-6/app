@@ -16,3 +16,6 @@ API_TIMEOUT_MS=10000
 # Feature Flags & Debugging
 ENABLE_MOCK_DATA=false
 ENABLE_DEBUG_LOGS=true
+
+# Preencha somente em builds conectadas ao Mockoon. Deixe vazio no Core real.
+DEMO_AUTH_CODE=

@@ -21,6 +21,18 @@ class NotificationItem {
     required this.createdAt,
   });
 
+  factory NotificationItem.fromJson(Map<String, dynamic> json) => NotificationItem(
+        id: (json['id'] as num).toInt(),
+        userId: (json['user_id'] as num).toInt(),
+        productId: (json['product_id'] as num).toInt(),
+        productTitle: json['product_title']?.toString() ?? 'Produto',
+        productImageUrl: json['product_image_url']?.toString(),
+        oldPrice: (json['old_price'] as num).toDouble(),
+        newPrice: (json['new_price'] as num).toDouble(),
+        isRead: json['is_read'] == true,
+        createdAt: DateTime.parse(json['created_at'].toString()),
+      );
+
   NotificationItem copyWith({
     int? id,
     int? userId,

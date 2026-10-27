@@ -22,10 +22,7 @@ class ApiClient {
   ApiClient({http.Client? client}) : _client = client ?? http.Client();
 
   Future<Map<String, String>> _getHeaders({bool requiresAuth = true}) async {
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-      'Accept': 'application/json',
-    };
+    final headers = <String, String>{'Accept': 'application/json'};
 
     if (requiresAuth) {
       final token = await AuthStorage.getToken();
@@ -52,7 +49,25 @@ class ApiClient {
     }
   }
 
-  Future<Map<String, dynamic>> get(String path, {bool requiresAuth = true}) async {
+  String _safePayload(Map<String, dynamic> body) {
+    const sensitiveKeys = {
+      'password',
+      'password_confirmation',
+      'reset_token',
+      'token',
+      'code',
+    };
+    final safeBody = body.map(
+      (key, value) =>
+          MapEntry(key, sensitiveKeys.contains(key) ? '***' : value),
+    );
+    return jsonEncode(safeBody);
+  }
+
+  Future<Map<String, dynamic>> get(
+    String path, {
+    bool requiresAuth = true,
+  }) async {
     final uri = _buildUri(path);
     final headers = await _getHeaders(requiresAuth: requiresAuth);
 
@@ -63,7 +78,9 @@ class ApiClient {
           .timeout(EnvConfig.apiTimeout);
       return _processResponse(response);
     } on TimeoutException {
-      throw ApiException('Tempo limite da requisição excedido. Verifique sua conexão.');
+      throw ApiException(
+        'Tempo limite da requisição excedido. Verifique sua conexão.',
+      );
     } catch (e) {
       if (e is ApiException) rethrow;
       throw ApiException('Erro de conexão com o servidor: $e');
@@ -78,9 +95,10 @@ class ApiClient {
     final uri = _buildUri(path);
     final headers = await _getHeaders(requiresAuth: requiresAuth);
     final bodyJson = body != null ? jsonEncode(body) : null;
+    if (bodyJson != null) headers['Content-Type'] = 'application/json';
 
     _log('POST $uri');
-    if (bodyJson != null) _log('Payload: $bodyJson');
+    if (body != null) _log('Payload: ${_safePayload(body)}');
 
     try {
       final response = await _client
@@ -88,7 +106,57 @@ class ApiClient {
           .timeout(EnvConfig.apiTimeout);
       return _processResponse(response);
     } on TimeoutException {
-      throw ApiException('Tempo limite da requisição excedido. Verifique sua conexão.');
+      throw ApiException(
+        'Tempo limite da requisição excedido. Verifique sua conexão.',
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Erro de conexão com o servidor: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> patch(
+    String path, {
+    Map<String, dynamic>? body,
+    bool requiresAuth = true,
+  }) async {
+    final uri = _buildUri(path);
+    final headers = await _getHeaders(requiresAuth: requiresAuth);
+    if (body != null) headers['Content-Type'] = 'application/json';
+    try {
+      final response = await _client
+          .patch(
+            uri,
+            headers: headers,
+            body: body == null ? null : jsonEncode(body),
+          )
+          .timeout(EnvConfig.apiTimeout);
+      return _processResponse(response);
+    } on TimeoutException {
+      throw ApiException(
+        'Tempo limite da requisição excedido. Verifique sua conexão.',
+      );
+    } catch (e) {
+      if (e is ApiException) rethrow;
+      throw ApiException('Erro de conexão com o servidor: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>> delete(
+    String path, {
+    bool requiresAuth = true,
+  }) async {
+    final uri = _buildUri(path);
+    final headers = await _getHeaders(requiresAuth: requiresAuth);
+    try {
+      final response = await _client
+          .delete(uri, headers: headers)
+          .timeout(EnvConfig.apiTimeout);
+      return _processResponse(response);
+    } on TimeoutException {
+      throw ApiException(
+        'Tempo limite da requisição excedido. Verifique sua conexão.',
+      );
     } catch (e) {
       if (e is ApiException) rethrow;
       throw ApiException('Erro de conexão com o servidor: $e');
@@ -139,7 +207,10 @@ class ApiClient {
       );
     }
 
-    final message = body['message'] ?? body['mensagem'] ?? 'Erro no servidor (${response.statusCode})';
+    final message =
+        body['message'] ??
+        body['mensagem'] ??
+        'Erro no servidor (${response.statusCode})';
     throw ApiException(message, statusCode: response.statusCode);
   }
 }

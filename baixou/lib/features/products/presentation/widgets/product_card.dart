@@ -9,14 +9,14 @@ import 'package:baixou/features/notifications/presentation/controllers/notificat
 class ProductCard extends StatelessWidget {
   final Product product;
 
-  const ProductCard({
-    super.key,
-    required this.product,
-  });
+  const ProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
-    final productsNotifier = Provider.of<ProductsNotifier>(context, listen: false);
+    final productsNotifier = Provider.of<ProductsNotifier>(
+      context,
+      listen: false,
+    );
 
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -47,22 +47,28 @@ class ProductCard extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child: product.status == ProductStatus.scraped && product.imageUrl != null
+                          child:
+                              product.status == ProductStatus.scraped &&
+                                  product.imageUrl != null
                               ? Image.network(
                                   product.imageUrl!,
                                   fit: BoxFit.contain,
                                   errorBuilder: (context, error, stackTrace) =>
-                                      const Icon(Icons.image_not_supported_outlined, size: 40, color: AppTheme.textSecondary),
+                                      const Icon(
+                                        Icons.image_not_supported_outlined,
+                                        size: 40,
+                                        color: AppTheme.textSecondary,
+                                      ),
                                 )
-                              : const Icon(Icons.shopping_bag_outlined, size: 48, color: AppTheme.textSecondary),
+                              : const Icon(
+                                  Icons.shopping_bag_outlined,
+                                  size: 48,
+                                  color: AppTheme.textSecondary,
+                                ),
                         ),
                       ),
                       // Status Badge
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: _buildStatusBadge(),
-                      ),
+                      Positioned(top: 8, left: 8, child: _buildStatusBadge()),
                       // Store Badge
                       Positioned(
                         top: 8,
@@ -93,7 +99,8 @@ class ProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Price
-                  product.status == ProductStatus.scraped && product.currentPrice != null
+                  product.status == ProductStatus.scraped &&
+                          product.currentPrice != null
                       ? Text(
                           'R\$ ${product.currentPrice!.toStringAsFixed(2)}',
                           style: const TextStyle(
@@ -103,7 +110,9 @@ class ProductCard extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          product.status == ProductStatus.pending ? 'Calculando...' : 'Indisponível',
+                          product.status == ProductStatus.pending
+                              ? 'Calculando...'
+                              : 'Indisponível',
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -114,14 +123,26 @@ class ProductCard extends StatelessWidget {
                   // Testing drop price simulator
                   if (product.status == ProductStatus.scraped)
                     IconButton(
-                      icon: const Icon(Icons.trending_down, color: AppTheme.primaryLight),
+                      icon: const Icon(
+                        Icons.trending_down,
+                        color: AppTheme.primaryLight,
+                      ),
                       tooltip: 'Simular queda de preço (Para testes)',
                       onPressed: () {
-                        final notificationsNotifier = Provider.of<NotificationsNotifier>(context, listen: false);
-                        productsNotifier.simulatePriceDrop(product.id, notificationsNotifier);
+                        final notificationsNotifier =
+                            Provider.of<NotificationsNotifier>(
+                              context,
+                              listen: false,
+                            );
+                        productsNotifier.simulatePriceDrop(
+                          product.id,
+                          notificationsNotifier,
+                        );
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
-                            content: Text('Simulando queda de preço! Verifique notificações.'),
+                            content: Text(
+                              'Simulando queda de preço! Verifique notificações.',
+                            ),
                             duration: Duration(seconds: 2),
                           ),
                         );
@@ -163,7 +184,7 @@ class ProductCard extends StatelessWidget {
             height: 10,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
+              valueColor: AlwaysStoppedAnimation<Color>(AppTheme.textInverse),
             ),
           ),
         );
@@ -191,7 +212,7 @@ class ProductCard extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-              color: Colors.black87,
+              color: AppTheme.textInverse,
               fontSize: 10,
               fontWeight: FontWeight.bold,
             ),
@@ -203,28 +224,28 @@ class ProductCard extends StatelessWidget {
 
   Widget _buildStoreBadge(String storeName) {
     Color badgeColor;
-    Color textColor = Colors.white;
+    Color textColor = AppTheme.textTertiary;
 
     switch (storeName.toLowerCase()) {
       case 'amazon':
-        badgeColor = const Color(0xFFFF9900);
-        textColor = Colors.black87;
+        badgeColor = AppTheme.brand;
+        textColor = AppTheme.onBrand;
         break;
       case 'mercado livre':
-        badgeColor = const Color(0xFFFFF159);
-        textColor = Colors.black87;
+        badgeColor = AppTheme.brand;
+        textColor = AppTheme.onBrand;
         break;
       case 'magalu':
-        badgeColor = const Color(0xFF0086FF);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'kabum':
-        badgeColor = const Color(0xFF0060EE);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'shopee':
-        badgeColor = const Color(0xFFEE4D2D);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       case 'americanas':
-        badgeColor = const Color(0xFFE60014);
+        badgeColor = AppTheme.bgSurfaceHigh;
         break;
       default:
         badgeColor = AppTheme.border;

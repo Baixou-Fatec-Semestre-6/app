@@ -33,6 +33,27 @@ class Product {
     this.store = 'Amazon',
   });
 
+  factory Product.fromJson(Map<String, dynamic> json) {
+    final statusValue = json['status']?.toString() ?? 'pending';
+    return Product(
+      id: (json['id'] as num).toInt(),
+      url: json['url']?.toString() ?? '',
+      title: json['title']?.toString(),
+      imageUrl: json['image_url']?.toString(),
+      currentPrice: (json['current_price'] as num?)?.toDouble(),
+      currency: json['currency']?.toString() ?? 'BRL',
+      status: ProductStatus.values.firstWhere(
+        (value) => value.name == statusValue,
+        orElse: () => ProductStatus.pending,
+      ),
+      lastErrorReason: json['last_error_reason']?.toString(),
+      lastScrapedAt: DateTime.tryParse(json['last_scraped_at']?.toString() ?? ''),
+      createdAt: DateTime.tryParse(json['created_at']?.toString() ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updated_at']?.toString() ?? '') ?? DateTime.now(),
+      store: json['store']?.toString() ?? 'Amazon',
+    );
+  }
+
   Product copyWith({
     int? id,
     String? url,

@@ -21,7 +21,7 @@ class AuthNotifier extends ChangeNotifier {
   String? get successMessage => _successMessage;
 
   AuthNotifier({AuthRepository? repository})
-      : _repository = repository ?? AuthRepositoryImpl() {
+    : _repository = repository ?? AuthRepositoryImpl() {
     tryAutoLogin();
   }
 
@@ -55,7 +55,7 @@ class AuthNotifier extends ChangeNotifier {
 
     if (EnvConfig.enableMockData) {
       await Future.delayed(const Duration(milliseconds: 800));
-      if (email.contains('@') && password.length >= 6) {
+      if (email.contains('@') && password.length >= 8) {
         _currentUser = User(
           id: 1,
           email: email,
@@ -96,7 +96,8 @@ class AuthNotifier extends ChangeNotifier {
     if (EnvConfig.enableMockData) {
       await Future.delayed(const Duration(milliseconds: 800));
       _isLoading = false;
-      _successMessage = 'Conta criada com sucesso! Digite o código de 4 dígitos.';
+      _successMessage =
+          'Conta criada com sucesso! Digite o código de 4 dígitos.';
       notifyListeners();
       return true;
     }
@@ -163,7 +164,8 @@ class AuthNotifier extends ChangeNotifier {
 
     try {
       await _repository.forgotPassword(email: email);
-      _successMessage = 'Se a conta existir, um código foi enviado para seu e-mail.';
+      _successMessage =
+          'Se a conta existir, um código foi enviado para seu e-mail.';
       _isLoading = false;
       notifyListeners();
       return true;

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:baixou/core/theme/app_theme.dart';
 import 'package:baixou/core/utils/responsive_layout.dart';
+import 'package:baixou/core/widgets/demo_code_banner.dart';
 import '../controllers/auth_notifier.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
@@ -53,12 +54,17 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       }
     } else if (_currentStep == ResetStep.newPassword && _resetToken != null) {
       final newPassword = _passwordController.text.trim();
-      final success = await authNotifier.resetPassword(_resetToken!, newPassword);
+      final success = await authNotifier.resetPassword(
+        _resetToken!,
+        newPassword,
+      );
 
       if (success && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Senha redefinida com sucesso! Faça login com a nova senha.'),
+            content: Text(
+              'Senha redefinida com sucesso! Faça login com a nova senha.',
+            ),
             backgroundColor: AppTheme.statusScraped,
           ),
         );
@@ -130,7 +136,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               child: Icon(
                 Icons.lock_reset_outlined,
                 size: 40,
-                color: Colors.white,
+                color: AppTheme.onBrand,
               ),
             ),
           ),
@@ -150,6 +156,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             textAlign: TextAlign.center,
             style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
           ),
+          if (_currentStep == ResetStep.enterCode) ...[
+            const SizedBox(height: 16),
+            const DemoCodeBanner(),
+          ],
           const SizedBox(height: 32),
 
           if (_currentStep == ResetStep.enterEmail) ...[
@@ -158,7 +168,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               keyboardType: TextInputType.emailAddress,
               decoration: const InputDecoration(
                 labelText: 'Email',
-                prefixIcon: Icon(Icons.email_outlined, color: AppTheme.textSecondary),
+                prefixIcon: Icon(
+                  Icons.email_outlined,
+                  color: AppTheme.textSecondary,
+                ),
                 hintText: 'exemplo@email.com',
               ),
               validator: (value) {
@@ -174,7 +187,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               keyboardType: TextInputType.number,
               maxLength: 4,
               textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 24, letterSpacing: 8, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 24,
+                letterSpacing: 8,
+                fontWeight: FontWeight.bold,
+              ),
               decoration: const InputDecoration(
                 labelText: 'Código de 4 dígitos',
                 hintText: '1234',
@@ -193,7 +210,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               obscureText: true,
               decoration: const InputDecoration(
                 labelText: 'Nova Senha',
-                prefixIcon: Icon(Icons.lock_outlined, color: AppTheme.textSecondary),
+                prefixIcon: Icon(
+                  Icons.lock_outlined,
+                  color: AppTheme.textSecondary,
+                ),
                 hintText: 'Mínimo 8 caracteres',
               ),
               validator: (value) {
@@ -210,7 +230,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           if (authNotifier.errorMessage != null) ...[
             Text(
               authNotifier.errorMessage!,
-              style: const TextStyle(color: AppTheme.statusFailed, fontSize: 14),
+              style: const TextStyle(
+                color: AppTheme.statusFailed,
+                fontSize: 14,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
@@ -219,19 +242,27 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           if (authNotifier.successMessage != null) ...[
             Text(
               authNotifier.successMessage!,
-              style: const TextStyle(color: AppTheme.statusScraped, fontSize: 14),
+              style: const TextStyle(
+                color: AppTheme.statusScraped,
+                fontSize: 14,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
           ],
 
           ElevatedButton(
-            onPressed: authNotifier.isLoading ? null : () => _submit(authNotifier),
+            onPressed: authNotifier.isLoading
+                ? null
+                : () => _submit(authNotifier),
             child: authNotifier.isLoading
                 ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppTheme.onBrand,
+                    ),
                   )
                 : Text(_getButtonLabel()),
           ),

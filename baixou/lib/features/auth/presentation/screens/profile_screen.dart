@@ -112,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               style: TextStyle(
                 fontSize: isMobile ? 32 : 40,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: AppTheme.onBrand,
               ),
             ),
           ),

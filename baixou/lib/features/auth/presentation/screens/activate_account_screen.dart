@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/theme/app_theme.dart';
 import '../../../../core/utils/responsive_layout.dart';
+import '../../../../core/widgets/demo_code_banner.dart';
 import '../controllers/auth_notifier.dart';
 
 class ActivateAccountScreen extends StatefulWidget {
@@ -33,7 +34,9 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
     if (success && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Conta ativada com sucesso! Faça login para continuar.'),
+          content: Text(
+            'Conta ativada com sucesso! Faça login para continuar.',
+          ),
           backgroundColor: AppTheme.statusScraped,
         ),
       );
@@ -46,9 +49,7 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
     final authNotifier = Provider.of<AuthNotifier>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ativação de Conta'),
-      ),
+      appBar: AppBar(title: const Text('Ativação de Conta')),
       body: SafeArea(
         child: ResponsiveLayout(
           mobileBody: _buildMobileLayout(authNotifier),
@@ -109,6 +110,8 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
             textAlign: TextAlign.center,
             style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14),
           ),
+          const SizedBox(height: 16),
+          const DemoCodeBanner(),
           const SizedBox(height: 32),
 
           TextFormField(
@@ -116,7 +119,11 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
             keyboardType: TextInputType.number,
             maxLength: 4,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 24, letterSpacing: 8, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 24,
+              letterSpacing: 8,
+              fontWeight: FontWeight.bold,
+            ),
             decoration: const InputDecoration(
               labelText: 'Código de 4 dígitos',
               hintText: '1234',
@@ -134,19 +141,27 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen> {
           if (authNotifier.errorMessage != null) ...[
             Text(
               authNotifier.errorMessage!,
-              style: const TextStyle(color: AppTheme.statusFailed, fontSize: 14),
+              style: const TextStyle(
+                color: AppTheme.statusFailed,
+                fontSize: 14,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 16),
           ],
 
           ElevatedButton(
-            onPressed: authNotifier.isLoading ? null : () => _submit(authNotifier),
+            onPressed: authNotifier.isLoading
+                ? null
+                : () => _submit(authNotifier),
             child: authNotifier.isLoading
                 ? const SizedBox(
                     height: 20,
                     width: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppTheme.onBrand,
+                    ),
                   )
                 : const Text('Ativar Conta'),
           ),

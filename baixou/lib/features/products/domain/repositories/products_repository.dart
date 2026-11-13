@@ -10,7 +10,7 @@ abstract class ProductsRepository {
   Future<void> stopTrackingProduct(int productId);
 
   // Price History
-  Future<List<PriceHistoryItem>> getPriceHistory(int productId);
+  Future<Map<int, List<PriceHistoryItem>>> getPriceHistory(int productId);
 
   // Price Alerts
   Future<PriceAlert> createPriceAlert({required int productId, required double targetPrice});

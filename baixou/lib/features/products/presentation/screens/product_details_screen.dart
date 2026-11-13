@@ -264,9 +264,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child:
-                    product.status == ProductStatus.scraped &&
-                        product.imageUrl != null
+                child: product.imageUrl != null
                     ? Image.network(
                         product.imageUrl!,
                         fit: BoxFit.contain,
@@ -317,11 +315,15 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             const SizedBox(height: 16),
 
             // Current Price
-            if (product.status == ProductStatus.scraped &&
-                product.currentPrice != null) ...[
-              const Text(
-                'Preço Atual',
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+            if (product.currentPrice != null) ...[
+              Text(
+                product.bestListing?.status == ProductStatus.scraped
+                    ? 'Preço Atual'
+                    : 'Último preço conhecido',
+                style: const TextStyle(
+                  color: AppTheme.textSecondary,
+                  fontSize: 14,
+                ),
               ),
               const SizedBox(height: 4),
               Text(

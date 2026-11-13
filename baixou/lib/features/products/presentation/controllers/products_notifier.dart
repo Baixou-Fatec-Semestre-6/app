@@ -37,9 +37,7 @@ class ProductsNotifier extends ChangeNotifier {
       _products = results[0] as List<Product>;
       _alerts = results[1] as List<PriceAlert>;
       await Future.wait(
-        _products
-            .where((product) => product.status == ProductStatus.scraped)
-            .map(_loadHistory),
+        _products.where((product) => product.listings.isNotEmpty).map(_loadHistory),
       );
     } catch (error) {
       _errorMessage = error.toString();
@@ -51,20 +49,34 @@ class ProductsNotifier extends ChangeNotifier {
 
   Future<void> _loadHistory(Product product) async {
     try {
-      _priceHistories[product.id] = await _repository.getPriceHistory(product.id);
+      _priceHistories.addAll(await _repository.getPriceHistory(product.id));
     } catch (_) {
-      _priceHistories[product.id] = const [];
+      for (final listing in product.listings) {
+        _priceHistories[listing.id] = const [];
+      }
     }
   }
 
   List<PriceHistoryItem> getPriceHistoryForProduct(int productId) =>
-      _priceHistories[productId] ?? const [];
+      _products
+          .where((product) => product.id == productId)
+          .map((product) => product.bestListing)
+          .whereType<ProductListing>()
+          .expand(
+            (listing) =>
+                _priceHistories[listing.id] ?? const <PriceHistoryItem>[],
+          )
+          .toList();
+
+  List<PriceHistoryItem> getPriceHistoryForListing(int listingId) =>
+      _priceHistories[listingId] ?? const [];
 
   List<PriceAlert> getAlertsForProduct(int productId) =>
       _alerts.where((alert) => alert.productId == productId).toList();
 
   bool hasPriceDropped(Product product) {
-    final history = _priceHistories[product.id];
+    final listing = product.bestListing;
+    final history = listing == null ? null : _priceHistories[listing.id];
     return product.currentPrice != null &&
         history != null &&
         history.length >= 2 &&
@@ -105,9 +117,14 @@ class ProductsNotifier extends ChangeNotifier {
   Future<void> stopTracking(int productId) async {
     try {
       await _repository.stopTrackingProduct(productId);
+      final removed = _products.where((product) => product.id == productId).toList();
+      for (final product in removed) {
+        for (final listing in product.listings) {
+          _priceHistories.remove(listing.id);
+        }
+      }
       _products.removeWhere((product) => product.id == productId);
       _alerts.removeWhere((alert) => alert.productId == productId);
-      _priceHistories.remove(productId);
       notifyListeners();
     } catch (error) {
       _errorMessage = error.toString();

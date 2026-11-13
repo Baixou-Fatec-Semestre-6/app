@@ -287,7 +287,9 @@ class _AddProductDialogState extends State<AddProductDialog> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'R\$ ${product.currentPrice?.toStringAsFixed(2)}',
+                                          product.currentPrice == null
+                                              ? 'Preço indisponível'
+                                              : 'R\$ ${product.currentPrice!.toStringAsFixed(2)}',
                                           style: const TextStyle(
                                             color: AppTheme.statusScraped,
                                             fontWeight: FontWeight.bold,

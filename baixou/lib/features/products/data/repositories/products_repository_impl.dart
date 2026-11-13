@@ -16,16 +16,29 @@ class ProductsRepositoryImpl implements ProductsRepository {
 
   @override
   Future<List<Product>> getTrackedProducts() async {
-    final response = await _api.get('/products?scope=tracked');
-    return _rows(response).map(Product.fromJson).toList();
+    return _loadCatalog('/products/catalog?scope=tracked');
   }
 
   @override
   Future<List<Product>> searchProductsInCatalog(String query) async {
-    final response = await _api.get(
+    return _loadCatalog(
       '/products/catalog?q=${Uri.encodeQueryComponent(query)}',
     );
-    return _rows(response).map(Product.fromJson).toList();
+  }
+
+  Future<List<Product>> _loadCatalog(String path) async {
+    final separator = path.contains('?') ? '&' : '?';
+    final products = <Product>[];
+    var page = 1;
+    while (true) {
+      final response = await _api.get('$path${separator}per_page=100&page=$page');
+      products.addAll(_rows(response).map(Product.fromJson));
+      final meta = response['meta'] as Map?;
+      final lastPage = (meta?['last_page'] as num?)?.toInt() ?? page;
+      if (page >= lastPage) break;
+      page++;
+    }
+    return products;
   }
 
   @override
@@ -48,9 +61,14 @@ class ProductsRepositoryImpl implements ProductsRepository {
   Future<void> stopTrackingProduct(int productId) => _api.delete('/products/$productId');
 
   @override
-  Future<List<PriceHistoryItem>> getPriceHistory(int productId) async {
-    final response = await _api.get('/products/$productId/price-history');
-    return _rows(response).map(PriceHistoryItem.fromJson).toList();
+  Future<Map<int, List<PriceHistoryItem>>> getPriceHistory(int productId) async {
+    final response = await _api.get('/products/$productId/price-history?period=365');
+    final product = Product.fromJson(
+      Map<String, dynamic>.from(response['data'] as Map),
+    );
+    return {
+      for (final listing in product.listings) listing.id: listing.history,
+    };
   }
 
   @override

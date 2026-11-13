@@ -47,9 +47,7 @@ class ProductCard extends StatelessWidget {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(12),
-                          child:
-                              product.status == ProductStatus.scraped &&
-                                  product.imageUrl != null
+                          child: product.imageUrl != null
                               ? Image.network(
                                   product.imageUrl!,
                                   fit: BoxFit.contain,
@@ -99,8 +97,7 @@ class ProductCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   // Price
-                  product.status == ProductStatus.scraped &&
-                          product.currentPrice != null
+                  product.currentPrice != null
                       ? Text(
                           'R\$ ${product.currentPrice!.toStringAsFixed(2)}',
                           style: const TextStyle(
@@ -150,6 +147,12 @@ class ProductCard extends StatelessWidget {
                     ),
                 ],
               ),
+              if (product.currentPrice != null &&
+                  product.bestListing?.status != ProductStatus.scraped)
+                const Text(
+                  'Último preço conhecido',
+                  style: TextStyle(fontSize: 12, color: AppTheme.textSecondary),
+                ),
             ],
           ),
         ),
@@ -158,6 +161,7 @@ class ProductCard extends StatelessWidget {
   }
 
   String _getTitleText() {
+    if (product.name.trim().isNotEmpty) return product.name;
     switch (product.status) {
       case ProductStatus.pending:
         return 'Iniciando rastreamento...';

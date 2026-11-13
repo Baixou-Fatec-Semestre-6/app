@@ -4,7 +4,7 @@ class NotificationItem {
   final int productId;
   final String productTitle;
   final String? productImageUrl;
-  final double oldPrice;
+  final double? oldPrice;
   final double newPrice;
   final bool isRead;
   final DateTime createdAt;
@@ -15,7 +15,7 @@ class NotificationItem {
     required this.productId,
     required this.productTitle,
     this.productImageUrl,
-    required this.oldPrice,
+    this.oldPrice,
     required this.newPrice,
     required this.isRead,
     required this.createdAt,
@@ -27,8 +27,10 @@ class NotificationItem {
         productId: (json['product_id'] as num).toInt(),
         productTitle: json['product_title']?.toString() ?? 'Produto',
         productImageUrl: json['product_image_url']?.toString(),
-        oldPrice: (json['old_price'] as num).toDouble(),
-        newPrice: (json['new_price'] as num).toDouble(),
+        oldPrice: json['old_price'] == null
+            ? null
+            : double.parse(json['old_price'].toString()),
+        newPrice: double.parse(json['new_price'].toString()),
         isRead: json['is_read'] == true,
         createdAt: DateTime.parse(json['created_at'].toString()),
       );

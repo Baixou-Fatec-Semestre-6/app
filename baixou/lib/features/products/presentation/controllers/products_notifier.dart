@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:baixou/features/notifications/presentation/controllers/notifications_notifier.dart';
 import 'package:baixou/features/products/data/repositories/products_repository_impl.dart';
@@ -14,9 +16,76 @@ class ProductsNotifier extends ChangeNotifier {
   bool _isLoading = false;
   String? _errorMessage;
 
-  ProductsNotifier({ProductsRepository? repository})
-      : _repository = repository ?? ProductsRepositoryImpl() {
+  /// A coleta é assíncrona (core → RabbitMQ → scraper → core): depois de
+  /// monitorar um produto a API responde `pending` e o preço chega segundos
+  /// depois. Enquanto houver oferta pendente, consulta a API periodicamente.
+  final Duration pendingPollInterval;
+  final Duration pendingPollLimit;
+  Timer? _pendingTimer;
+  DateTime? _pendingSince;
+  bool _isPolling = false;
+  bool _disposed = false;
+
+  ProductsNotifier({
+    ProductsRepository? repository,
+    this.pendingPollInterval = const Duration(seconds: 3),
+    this.pendingPollLimit = const Duration(minutes: 2),
+  }) : _repository = repository ?? ProductsRepositoryImpl() {
     refresh();
+  }
+
+  bool get _hasPending => _products.any(
+        (product) => product.listings
+            .any((listing) => listing.status == ProductStatus.pending),
+      );
+
+  void _watchPending() {
+    if (_disposed || !_hasPending) {
+      _stopWatchingPending();
+      return;
+    }
+    _pendingSince ??= DateTime.now();
+    _pendingTimer ??= Timer.periodic(pendingPollInterval, (_) => _pollPending());
+  }
+
+  void _stopWatchingPending() {
+    _pendingTimer?.cancel();
+    _pendingTimer = null;
+    _pendingSince = null;
+  }
+
+  Future<void> _pollPending() async {
+    if (_isPolling || _disposed) return;
+    if (!_hasPending ||
+        DateTime.now().difference(_pendingSince ?? DateTime.now()) > pendingPollLimit) {
+      _stopWatchingPending();
+      return;
+    }
+    _isPolling = true;
+    try {
+      final previous = {for (final p in _products) p.id: p.status};
+      final latest = await _repository.getTrackedProducts();
+      if (_disposed) return;
+      _products = latest;
+      final changed = latest.where(
+        (p) => p.listings.isNotEmpty && previous[p.id] != p.status,
+      );
+      await Future.wait(changed.map(_loadHistory));
+      if (_disposed) return;
+      notifyListeners();
+    } catch (_) {
+      // Falha momentânea de rede: tenta de novo no próximo intervalo.
+    } finally {
+      _isPolling = false;
+    }
+    if (!_hasPending) _stopWatchingPending();
+  }
+
+  @override
+  void dispose() {
+    _disposed = true;
+    _stopWatchingPending();
+    super.dispose();
   }
 
   List<Product> get products => List.unmodifiable(_products);
@@ -45,6 +114,7 @@ class ProductsNotifier extends ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+    _watchPending();
   }
 
   Future<void> _loadHistory(Product product) async {
@@ -105,13 +175,14 @@ class ProductsNotifier extends ChangeNotifier {
     notifyListeners();
     try {
       final product = await _repository.trackNewProduct(baseProductId: baseProduct.id);
-      _products = [..._products, product];
+      _products = [..._products.where((p) => p.id != product.id), product];
     } catch (error) {
       _errorMessage = error.toString();
     } finally {
       _isLoading = false;
       notifyListeners();
     }
+    _watchPending();
   }
 
   Future<void> stopTracking(int productId) async {

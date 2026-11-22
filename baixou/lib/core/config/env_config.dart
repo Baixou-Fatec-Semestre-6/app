@@ -9,6 +9,17 @@ class EnvConfig {
     return dotenv.env['API_BASE_URL'] ?? 'http://10.0.2.2:8000/api';
   }
 
+  /// Converts media paths returned by the core (e.g. `/catalog-images/x.jpg`)
+  /// into absolute URLs on the same host as the API. Absolute URLs are kept.
+  static String? resolveMediaUrl(Object? value) {
+    final raw = value?.toString().trim() ?? '';
+    if (raw.isEmpty) return null;
+    final parsed = Uri.tryParse(raw);
+    if (parsed == null) return null;
+    if (parsed.hasScheme) return raw;
+    return Uri.parse(apiBaseUrl).resolveUri(parsed).toString();
+  }
+
   /// Application Name
   static String get appName =>
       dotenv.env['APP_NAME'] ?? 'BAIXOU - Price Tracker';

@@ -1,3 +1,4 @@
+import 'package:baixou/core/config/env_config.dart';
 class NotificationItem {
   final int id;
   final int userId;
@@ -26,7 +27,7 @@ class NotificationItem {
         userId: (json['user_id'] as num).toInt(),
         productId: (json['product_id'] as num).toInt(),
         productTitle: json['product_title']?.toString() ?? 'Produto',
-        productImageUrl: json['product_image_url']?.toString(),
+        productImageUrl: EnvConfig.resolveMediaUrl(json['product_image_url']),
         oldPrice: json['old_price'] == null
             ? null
             : double.parse(json['old_price'].toString()),

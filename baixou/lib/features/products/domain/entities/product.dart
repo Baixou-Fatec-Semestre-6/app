@@ -1,3 +1,4 @@
+import 'package:baixou/core/config/env_config.dart';
 import 'price_history_item.dart';
 
 double? _asDouble(dynamic value) =>
@@ -81,7 +82,7 @@ class Product {
   factory Product.fromJson(Map<String, dynamic> json) => Product(
         id: (json['id'] as num).toInt(),
         name: (json['name'] ?? json['title'])?.toString() ?? 'Produto',
-        imageUrl: json['image_url']?.toString(),
+        imageUrl: EnvConfig.resolveMediaUrl(json['image_url']),
         listings: (json['listings'] as List? ?? const [])
             .map((item) => ProductListing.fromJson(
                   Map<String, dynamic>.from(item as Map),

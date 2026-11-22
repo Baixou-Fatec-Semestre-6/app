@@ -1,0 +1,1810 @@
+{
+  "uuid": "4e549e86-e6bb-4d53-9de8-2eb3a27a7b01",
+  "lastMigration": 33,
+  "name": "BAIXOU - API portátil",
+  "endpointPrefix": "api",
+  "latency": 100,
+  "port": 3001,
+  "hostname": "0.0.0.0",
+  "folders": [],
+  "routes": [
+    {
+      "uuid": "10000000-0000-4000-8000-000000000001",
+      "type": "http",
+      "documentation": "Verifica se o ambiente Mockoon está acessível.",
+      "method": "get",
+      "endpoint": "health",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000001",
+          "body": "{\n  \"data\": {\n    \"status\": \"ok\",\n    \"service\": \"baixou-mock-api\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Online",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000002",
+      "type": "http",
+      "documentation": "Use erro@baixou.app para receber 422 e inativo@baixou.app para receber 403.",
+      "method": "post",
+      "endpoint": "auth/login",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000002",
+          "body": "{\n  \"message\": \"As credenciais fornecidas são inválidas.\",\n  \"errors\": {\n    \"email\": [\n      \"As credenciais fornecidas são inválidas.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Credenciais inválidas",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "email",
+              "value": "erro@baixou.app",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000003",
+          "body": "{\n  \"message\": \"Conta ainda não ativada.\"\n}",
+          "latency": 0,
+          "statusCode": 403,
+          "label": "Conta não ativada",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "email",
+              "value": "inativo@baixou.app",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "29f27087-f9bc-4b40-b4a0-b2477f0cf101",
+          "body": "{\n  \"message\": \"Dados inválidos.\",\n  \"errors\": {\n    \"password\": [\n      \"A senha deve conter pelo menos 8 caracteres.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Senha curta",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "password",
+              "value": "^.{0,7}$",
+              "invert": false,
+              "operator": "regex"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000004",
+          "body": "{\n  \"message\": \"Erro interno simulado.\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Erro interno",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "server-error",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000005",
+          "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Gabriel\",\n    \"email\": \"gabriel@baixou.app\",\n    \"created_at\": \"2026-10-25T12:00:00Z\"\n  },\n  \"token\": \"mock-token-baixou\"\n}",
+          "latency": 250,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000003",
+      "type": "http",
+      "documentation": "Cadastro simulado. Use existente@baixou.app para receber erro de validação.",
+      "method": "post",
+      "endpoint": "auth/register",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000006",
+          "body": "{\n  \"message\": \"The email has already been taken.\",\n  \"errors\": {\n    \"email\": [\n      \"The email has already been taken.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "E-mail existente",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "email",
+              "value": "existente@baixou.app",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "29f27087-f9bc-4b40-b4a0-b2477f0cf102",
+          "body": "{\n  \"message\": \"Dados inválidos.\",\n  \"errors\": {\n    \"password\": [\n      \"A senha deve conter pelo menos 8 caracteres.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Senha curta",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "password",
+              "value": "^.{0,7}$",
+              "invert": false,
+              "operator": "regex"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000007",
+          "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Gabriel\",\n    \"email\": \"gabriel@baixou.app\",\n    \"created_at\": \"2026-10-25T12:00:00Z\"\n  },\n  \"message\": \"Conta criada com sucesso. Verifique seu e-mail.\"\n}",
+          "latency": 300,
+          "statusCode": 201,
+          "label": "Criado",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000004",
+      "type": "http",
+      "documentation": "Somente o código 1234 ativa a conta; qualquer outro código retorna 422.",
+      "method": "post",
+      "endpoint": "auth/activate",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000008",
+          "body": "{\n  \"message\": \"Código de ativação inválido.\",\n  \"errors\": {\n    \"code\": [\n      \"Código de ativação inválido.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Código inválido",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000009",
+          "body": "{\n  \"message\": \"Conta ativada com sucesso.\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "code",
+              "value": "1234",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000005",
+      "type": "http",
+      "documentation": "Solicita recuperação de senha.",
+      "method": "post",
+      "endpoint": "auth/forgot-password",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000010",
+          "body": "{\n  \"message\": \"Se a conta existir, um código foi enviado.\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000006",
+      "type": "http",
+      "documentation": "Somente o código 1234 libera a redefinição; qualquer outro código retorna 422.",
+      "method": "post",
+      "endpoint": "auth/verify-reset-code",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000011",
+          "body": "{\n  \"message\": \"Código inválido ou expirado.\",\n  \"errors\": {\n    \"code\": [\n      \"Código inválido ou expirado.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Código inválido",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000012",
+          "body": "{\n  \"message\": \"Código válido.\",\n  \"reset_token\": \"mock-reset-token\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "code",
+              "value": "1234",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000007",
+      "type": "http",
+      "documentation": "Redefine a senha.",
+      "method": "post",
+      "endpoint": "auth/reset-password",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000013",
+          "body": "{\n  \"message\": \"Token inválido ou expirado.\"\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Token inválido",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "reset_token",
+              "value": "invalid",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000014",
+          "body": "{\n  \"message\": \"Senha redefinida com sucesso.\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000008",
+      "type": "http",
+      "documentation": "Retorna o usuário autenticado.",
+      "method": "get",
+      "endpoint": "auth/me",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000015",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000016",
+          "body": "{\n  \"data\": {\n    \"id\": 1,\n    \"name\": \"Gabriel\",\n    \"email\": \"gabriel@baixou.app\",\n    \"created_at\": \"2026-10-25T12:00:00Z\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000009",
+      "type": "http",
+      "documentation": "Encerra a sessão.",
+      "method": "post",
+      "endpoint": "auth/logout",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000017",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000018",
+          "body": "{\n  \"message\": \"Logout efetuado com sucesso.\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000010",
+      "type": "http",
+      "documentation": "Produtos monitorados. X-Mock-Scenario: empty, pending, unauthorized ou server-error.",
+      "method": "get",
+      "endpoint": "products",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000019",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000020",
+          "body": "{\n  \"message\": \"Erro interno simulado.\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Erro interno",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "server-error",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000021",
+          "body": "{\n  \"data\": []\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Lista vazia",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "empty",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000022",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": 104,\n      \"url\": \"https://www.amazon.com.br/dp/B0CHX1B3H2\",\n      \"title\": null,\n      \"image_url\": null,\n      \"current_price\": null,\n      \"currency\": \"BRL\",\n      \"status\": \"pending\",\n      \"last_error_reason\": null,\n      \"last_scraped_at\": null,\n      \"created_at\": \"2026-10-20T12:00:00Z\",\n      \"updated_at\": \"2026-10-25T19:00:00Z\",\n      \"store\": \"Amazon\"\n    }\n  ]\n}",
+          "latency": 1200,
+          "statusCode": 200,
+          "label": "Somente pendente",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "pending",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000023",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": 101,\n      \"url\": \"https://www.amazon.com.br/dp/B09TWDYSVP\",\n      \"title\": \"Kindle 11ª Geração\",\n      \"image_url\": \"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\n      \"current_price\": 474.05,\n      \"currency\": \"BRL\",\n      \"status\": \"scraped\",\n      \"last_error_reason\": null,\n      \"last_scraped_at\": \"2026-10-25T19:00:00Z\",\n      \"created_at\": \"2026-10-20T12:00:00Z\",\n      \"updated_at\": \"2026-10-25T19:00:00Z\",\n      \"store\": \"Amazon\"\n    },\n    {\n      \"id\": 102,\n      \"url\": \"https://www.amazon.com.br/dp/B0F8R9NDXC\",\n      \"title\": \"PlayStation 5 Slim\",\n      \"image_url\": \"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\n      \"current_price\": 4691.91,\n      \"currency\": \"BRL\",\n      \"status\": \"scraped\",\n      \"last_error_reason\": null,\n      \"last_scraped_at\": \"2026-10-25T19:00:00Z\",\n      \"created_at\": \"2026-10-20T12:00:00Z\",\n      \"updated_at\": \"2026-10-25T19:00:00Z\",\n      \"store\": \"Amazon\"\n    },\n    {\n      \"id\": 103,\n      \"url\": \"https://www.amazon.com.br/dp/B0CHX1B3H2\",\n      \"title\": null,\n      \"image_url\": null,\n      \"current_price\": null,\n      \"currency\": \"BRL\",\n      \"status\": \"failed\",\n      \"last_error_reason\": \"blocked\",\n      \"last_scraped_at\": null,\n      \"created_at\": \"2026-10-20T12:00:00Z\",\n      \"updated_at\": \"2026-10-25T19:00:00Z\",\n      \"store\": \"Amazon\"\n    }\n  ]\n}",
+          "latency": 250,
+          "statusCode": 200,
+          "label": "Lista normal",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000011",
+      "type": "http",
+      "documentation": "Pesquisa no catálogo. X-Mock-Scenario: empty para nenhum resultado.",
+      "method": "get",
+      "endpoint": "products/catalog",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000024",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000025",
+          "body": "{\n  \"message\": \"Erro interno simulado.\"\n}",
+          "latency": 0,
+          "statusCode": 500,
+          "label": "Erro interno",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "server-error",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000026",
+          "body": "{\n  \"data\": []\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sem resultados",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "empty",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000027",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"url\": \"https://www.amazon.com.br/dp/B0CHX1B3H2\",\n      \"title\": \"Kindle 11ª Geração\",\n      \"image_url\": \"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\n      \"current_price\": 474.05,\n      \"currency\": \"BRL\",\n      \"status\": \"scraped\",\n      \"last_error_reason\": null,\n      \"last_scraped_at\": \"2026-10-25T19:00:00Z\",\n      \"created_at\": \"2026-10-20T12:00:00Z\",\n      \"updated_at\": \"2026-10-25T19:00:00Z\",\n      \"store\": \"Amazon\"\n    },\n    {\n      \"id\": 2,\n      \"url\": \"https://www.amazon.com.br/dp/B0CHX1B3H2\",\n      \"title\": \"PlayStation 5 Slim\",\n      \"image_url\": \"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\n      \"current_price\": 4691.91,\n      \"currency\": \"BRL\",\n      \"status\": \"scraped\",\n      \"last_error_reason\": null,\n      \"last_scraped_at\": \"2026-10-25T19:00:00Z\",\n      \"created_at\": \"2026-10-20T12:00:00Z\",\n      \"updated_at\": \"2026-10-25T19:00:00Z\",\n      \"store\": \"Amazon\"\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Resultados",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000012",
+      "type": "http",
+      "documentation": "Inicia monitoramento de um item do catálogo.",
+      "method": "post",
+      "endpoint": "products",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000028",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000029",
+          "body": "{\n  \"message\": \"Dados inválidos.\",\n  \"errors\": {\n    \"base_product_id\": [\n      \"O produto é obrigatório.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Produto obrigatório",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "base_product_id",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000030",
+          "body": "{\n  \"data\": {\n    \"id\": 104,\n    \"url\": \"https://www.amazon.com.br/dp/B0CHX1B3H2\",\n    \"title\": null,\n    \"image_url\": null,\n    \"current_price\": null,\n    \"currency\": \"BRL\",\n    \"status\": \"pending\",\n    \"last_error_reason\": null,\n    \"last_scraped_at\": null,\n    \"created_at\": \"2026-10-20T12:00:00Z\",\n    \"updated_at\": \"2026-10-25T19:00:00Z\",\n    \"store\": \"Amazon\"\n  }\n}",
+          "latency": 350,
+          "statusCode": 201,
+          "label": "Pendente",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000013",
+      "type": "http",
+      "documentation": "Detalhes de produto. ID 404 simula não encontrado.",
+      "method": "get",
+      "endpoint": "products/:id",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000031",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000032",
+          "body": "{\n  \"message\": \"Produto não encontrado.\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Não encontrado",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "id",
+              "value": "404",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000033",
+          "body": "{\n  \"data\": {\n    \"id\": 101,\n    \"url\": \"https://www.amazon.com.br/dp/B09TWDYSVP\",\n    \"title\": \"Kindle 11ª Geração\",\n    \"image_url\": \"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\n    \"current_price\": 474.05,\n    \"currency\": \"BRL\",\n    \"status\": \"scraped\",\n    \"last_error_reason\": null,\n    \"last_scraped_at\": \"2026-10-25T19:00:00Z\",\n    \"created_at\": \"2026-10-20T12:00:00Z\",\n    \"updated_at\": \"2026-10-25T19:00:00Z\",\n    \"store\": \"Amazon\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Scraped",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000014",
+      "type": "http",
+      "documentation": "Remove o produto do monitoramento.",
+      "method": "delete",
+      "endpoint": "products/:id",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000034",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000035",
+          "body": "{\n  \"message\": \"Produto não encontrado.\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Não encontrado",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "id",
+              "value": "404",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000036",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 204,
+          "label": "Removido",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000015",
+      "type": "http",
+      "documentation": "Histórico do produto.",
+      "method": "get",
+      "endpoint": "products/:id/price-history",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000037",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000038",
+          "body": "{\n  \"data\": []\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Histórico vazio",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "empty",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000039",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": 1,\n      \"product_id\": 101,\n      \"price\": 529,\n      \"scraped_at\": \"2026-10-10T12:00:00Z\"\n    },\n    {\n      \"id\": 2,\n      \"product_id\": 101,\n      \"price\": 499,\n      \"scraped_at\": \"2026-10-18T12:00:00Z\"\n    },\n    {\n      \"id\": 3,\n      \"product_id\": 101,\n      \"price\": 474.05,\n      \"scraped_at\": \"2026-10-25T19:00:00Z\"\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Histórico",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000016",
+      "type": "http",
+      "documentation": "Endpoint exclusivo de demonstração.",
+      "method": "post",
+      "endpoint": "products/:id/simulate-price-drop",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000040",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000041",
+          "body": "{\n  \"data\": {\n    \"id\": 101,\n    \"url\": \"https://www.amazon.com.br/dp/B09TWDYSVP\",\n    \"title\": \"Kindle 11ª Geração\",\n    \"image_url\": \"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\n    \"current_price\": 379,\n    \"currency\": \"BRL\",\n    \"status\": \"scraped\",\n    \"last_error_reason\": null,\n    \"last_scraped_at\": \"2026-10-25T19:00:00Z\",\n    \"created_at\": \"2026-10-20T12:00:00Z\",\n    \"updated_at\": \"2026-10-25T19:00:00Z\",\n    \"store\": \"Amazon\"\n  }\n}",
+          "latency": 500,
+          "statusCode": 200,
+          "label": "Preço reduzido",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000017",
+      "type": "http",
+      "documentation": "Lista alertas ativos.",
+      "method": "get",
+      "endpoint": "alerts",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000042",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000043",
+          "body": "{\n  \"data\": []\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Lista vazia",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "empty",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000044",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": 201,\n      \"user_id\": 1,\n      \"product_id\": 101,\n      \"target_price\": 450,\n      \"created_at\": \"2026-10-25T12:00:00Z\"\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Lista",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000018",
+      "type": "http",
+      "documentation": "Cria alerta de preço.",
+      "method": "post",
+      "endpoint": "alerts",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000045",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000046",
+          "body": "{\n  \"message\": \"Dados inválidos.\",\n  \"errors\": {\n    \"target_price\": [\n      \"O preço alvo deve ser maior que zero.\"\n    ]\n  }\n}",
+          "latency": 0,
+          "statusCode": 422,
+          "label": "Preço inválido",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "target_price",
+              "value": "0",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000047",
+          "body": "{\n  \"data\": {\n    \"id\": 301,\n    \"user_id\": 1,\n    \"product_id\": 101,\n    \"target_price\": 450,\n    \"created_at\": \"2026-10-25T12:00:00Z\"\n  }\n}",
+          "latency": 0,
+          "statusCode": 201,
+          "label": "Criado",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000019",
+      "type": "http",
+      "documentation": "Remove alerta.",
+      "method": "delete",
+      "endpoint": "alerts/:id",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000048",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000049",
+          "body": "{}",
+          "latency": 0,
+          "statusCode": 204,
+          "label": "Removido",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000020",
+      "type": "http",
+      "documentation": "Lista notificações.",
+      "method": "get",
+      "endpoint": "notifications",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000050",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000051",
+          "body": "{\n  \"data\": []\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Lista vazia",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "X-Mock-Scenario",
+              "value": "empty",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000052",
+          "body": "{\n  \"data\": [\n    {\n      \"id\": 401,\n      \"user_id\": 1,\n      \"product_id\": 101,\n      \"product_title\": \"Kindle 11ª Geração\",\n      \"product_image_url\": \"https://m.media-amazon.com/images/I/71X0PGbcVRL._AC_SL1500_.jpg\",\n      \"old_price\": 499,\n      \"new_price\": 474.05,\n      \"is_read\": false,\n      \"created_at\": \"2026-10-25T19:00:00Z\"\n    },\n    {\n      \"id\": 402,\n      \"user_id\": 1,\n      \"product_id\": 102,\n      \"product_title\": \"PlayStation 5 Slim\",\n      \"product_image_url\": null,\n      \"old_price\": 4899,\n      \"new_price\": 4691.91,\n      \"is_read\": true,\n      \"created_at\": \"2026-10-24T19:00:00Z\"\n    }\n  ]\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Lista",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000021",
+      "type": "http",
+      "documentation": "Marca todas as notificações como lidas.",
+      "method": "patch",
+      "endpoint": "notifications/read-all",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000053",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000054",
+          "body": "{\n  \"message\": \"Notificações marcadas como lidas.\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    },
+    {
+      "uuid": "10000000-0000-4000-8000-000000000022",
+      "type": "http",
+      "documentation": "Marca uma notificação como lida.",
+      "method": "patch",
+      "endpoint": "notifications/:id/read",
+      "responses": [
+        {
+          "uuid": "20000000-0000-4000-8000-000000000055",
+          "body": "{\n  \"message\": \"Unauthenticated.\"\n}",
+          "latency": 0,
+          "statusCode": 401,
+          "label": "Sem autenticação",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "header",
+              "modifier": "Authorization",
+              "value": "",
+              "invert": false,
+              "operator": "null"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000056",
+          "body": "{\n  \"message\": \"Notificação não encontrada.\"\n}",
+          "latency": 0,
+          "statusCode": 404,
+          "label": "Não encontrada",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [
+            {
+              "target": "body",
+              "modifier": "id",
+              "value": "404",
+              "invert": false,
+              "operator": "equals"
+            }
+          ],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": false,
+          "crudKey": "id",
+          "callbacks": []
+        },
+        {
+          "uuid": "20000000-0000-4000-8000-000000000057",
+          "body": "{\n  \"message\": \"Notificação marcada como lida.\"\n}",
+          "latency": 0,
+          "statusCode": 200,
+          "label": "Sucesso",
+          "headers": [],
+          "bodyType": "INLINE",
+          "filePath": "",
+          "databucketID": "",
+          "sendFileAsBody": false,
+          "rules": [],
+          "rulesOperator": "AND",
+          "disableTemplating": false,
+          "fallbackTo404": false,
+          "default": true,
+          "crudKey": "id",
+          "callbacks": []
+        }
+      ],
+      "responseMode": null,
+      "streamingMode": null,
+      "streamingInterval": 0
+    }
+  ],
+  "rootChildren": [
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000001"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000002"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000003"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000004"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000005"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000006"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000007"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000008"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000009"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000010"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000011"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000012"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000013"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000014"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000015"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000016"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000017"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000018"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000019"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000020"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000021"
+    },
+    {
+      "type": "route",
+      "uuid": "10000000-0000-4000-8000-000000000022"
+    }
+  ],
+  "proxyMode": false,
+  "proxyHost": "",
+  "proxyRemovePrefix": false,
+  "cors": true,
+  "headers": [
+    {
+      "key": "Content-Type",
+      "value": "application/json; charset=utf-8"
+    },
+    {
+      "key": "Cache-Control",
+      "value": "no-store"
+    }
+  ],
+  "proxyReqHeaders": [],
+  "proxyResHeaders": [],
+  "tlsOptions": {
+    "enabled": false,
+    "type": "CERT",
+    "pfxPath": "",
+    "certPath": "",
+    "keyPath": "",
+    "caPath": "",
+    "passphrase": ""
+  },
+  "data": [],
+  "callbacks": []
+}

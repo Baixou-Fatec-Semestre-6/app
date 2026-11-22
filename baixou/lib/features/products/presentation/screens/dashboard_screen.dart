@@ -25,6 +25,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _selectedFilter = 'TODOS'; // 'TODOS' | 'CAIU'
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context.read<ProductsNotifier>().refresh();
+      context.read<NotificationsNotifier>().refresh();
+    });
+  }
+
+  @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
@@ -86,7 +96,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ? FloatingActionButton(
               onPressed: () => AddProductDialog.show(context, isMobile: true),
               backgroundColor: AppTheme.primary,
-              child: const Icon(Icons.add, color: Colors.white),
+              child: const Icon(Icons.add, color: AppTheme.onBrand),
             )
           : null,
     );
@@ -417,7 +427,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Text(
           label,
           style: TextStyle(
-            color: isSelected ? Colors.white : AppTheme.textSecondary,
+            color: isSelected
+                ? (badgeColor == null ? AppTheme.onBrand : AppTheme.textInverse)
+                : AppTheme.textSecondary,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
             fontSize: 14,
           ),

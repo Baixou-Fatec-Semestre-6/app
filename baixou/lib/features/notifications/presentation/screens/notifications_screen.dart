@@ -79,10 +79,10 @@ class NotificationsScreen extends StatelessWidget {
               itemCount: notifications.length,
               itemBuilder: (context, index) {
                 final notification = notifications[index];
-                final percentDrop =
-                    ((notification.oldPrice - notification.newPrice) /
-                            notification.oldPrice *
-                            100)
+                final oldPrice = notification.oldPrice;
+                final percentDrop = oldPrice == null || oldPrice == 0
+                    ? null
+                    : ((oldPrice - notification.newPrice) / oldPrice * 100)
                         .toStringAsFixed(0);
 
                 return Card(
@@ -171,7 +171,7 @@ class NotificationsScreen extends StatelessWidget {
                                           const TextSpan(text: 'de '),
                                           TextSpan(
                                             text:
-                                                'R\$ ${notification.oldPrice.toStringAsFixed(2)}',
+                                                'R\$ ${notification.oldPrice?.toStringAsFixed(2) ?? '--'}',
                                             style: const TextStyle(
                                               decoration:
                                                   TextDecoration.lineThrough,

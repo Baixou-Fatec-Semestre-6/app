@@ -248,7 +248,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     width: 20,
                     child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Colors.white,
+                      color: AppTheme.onBrand,
                     ),
                   )
                 : Text(_isLoginMode ? 'Entrar' : 'Cadastrar'),

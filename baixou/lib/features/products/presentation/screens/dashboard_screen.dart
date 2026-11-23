@@ -441,9 +441,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildEmptyState(bool isListEmpty) {
     if (_selectedFilter == 'CAIU') {
       return Center(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(32.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(
@@ -478,9 +479,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     }
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(32.0),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
